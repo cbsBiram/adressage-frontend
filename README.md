@@ -18,3 +18,10 @@ Installer les dépendances
  npm install -g expo-cli
  npm start # you can also use: expo start
 ```
+
+### Nouvelle branche
+```sh
+git branch <Branch_Name>
+git branch
+git checkout <Branch_Name>
+```
