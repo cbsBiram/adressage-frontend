@@ -1,6 +1,6 @@
 {
     "expo": {
-        "name": "frontEnd",
+        "name": "frontend",
         "slug": "frontend-app",
         "privacy": "public",
         "sdkVersion": "36.0.0",
