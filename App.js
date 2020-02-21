@@ -1,19 +1,8 @@
+import "react-native-gesture-handler";
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import Home from "./app/views/Home";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Button title="Générer le code"></Button>
-    </View>
-  );
+  return <Home />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
