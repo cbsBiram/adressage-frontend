@@ -20,8 +20,30 @@ Installer les dépendances
 ```
 
 ### Nouvelle branche
+
 ```sh
-git branch <Branch_Name>
-git branch
+git checkout -b <Branch_Name>
+git branch  // pour vérifier que l'on est bien placé sur la branche créée
+```
+
+### Changement de branche
+```sh
 git checkout <Branch_Name>
 ```
+### Pour récupérer les changements effectués sur la branche Master
+
+```sh
+git pull origin master
+```
+
+### Pour pusher les modifications locales
+
+```sh
+git add .
+git commit -m "<Message>"
+git push
+```
+
+### Lien utile pour les commandes git: https://gitexplorer.com/
+
+---
