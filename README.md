@@ -15,15 +15,16 @@ Cloner le projet
 Installer les dépendances
 
 ```sh
- npm install -g expo-cli
- npm start # you can also use: expo start
+ npm install -g expo-cli # Installer expo
+ npm install # Installer les dépendance
+ npm start # you can also use: expo start pour démarrer l'application
 ```
 
 ### Nouvelle branche
 
 ```sh
 git checkout -b <Branch_Name>
-git branch  // pour vérifier que l'on est bien placé sur la branche créée
+git branch  # pour vérifier que l'on est bien placé sur la branche créée
 ```
 
 ### Changement de branche
