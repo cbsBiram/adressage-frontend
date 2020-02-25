@@ -16,10 +16,9 @@ class Home extends React.Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     let { latitude, longitude } = this.props;
-
-    await axios
+    axios
       .get(
         `https://nominatim.openstreetmap.org/reverse?email=ibrahimabiram@gmail.com&format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
         { headers: { "User-Agent": "frontend-adressage" } }
@@ -90,7 +89,7 @@ class Home extends React.Component {
                   style={{ paddingLeft: 16 }}
                 />
               }
-              title="Carnet d'adresse"
+              title="Carnet d'Adresse"
               titleStyle={{ fontSize: 20, color: "#35605a" }}
               onPress={() => getCarnet()}
               type="solid"
