@@ -16,10 +16,11 @@ class Home extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    await axios
+  componentDidMount() {
+    let { latitude, longitude } = this.props;
+    axios
       .get(
-        `https://nominatim.openstreetmap.org/reverse?email=ibrahimabiram@gmail.com&format=json&lat=14.7223758&lon=-17.4640854&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?email=ibrahimabiram@gmail.com&format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
         { headers: { "User-Agent": "frontend-adressage" } }
       )
       .then(result => {
@@ -88,7 +89,7 @@ class Home extends React.Component {
                   style={{ paddingLeft: 16 }}
                 />
               }
-              title="Carnet d'adresse"
+              title="Carnet d'Adresse"
               titleStyle={{ fontSize: 20, color: "#35605a" }}
               onPress={() => getCarnet()}
               type="solid"

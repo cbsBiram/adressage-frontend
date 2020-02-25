@@ -1,5 +1,6 @@
 import React from "react";
 import Home from "./app/views/Home";
+import { ActivityIndicator } from "react-native";
 
 export default class App extends React.Component {
   constructor() {
@@ -38,7 +39,9 @@ export default class App extends React.Component {
 
   render() {
     let { lat, lng } = this.state.where;
-
-    return <Home latitude={lat} longitude={lng} />;
+    if (lat && lng) return <Home latitude={lat} longitude={lng} />;
+    return (
+      <ActivityIndicator size="large" color="#35605a" style={{ flex: 2 }} />
+    );
   }
 }
