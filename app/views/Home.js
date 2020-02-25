@@ -9,8 +9,8 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      address_details: {},
-      address_name: "",
+      addressDetails: {},
+      addressName: "",
       code: "",
       selectedItem: []
     };
@@ -24,9 +24,9 @@ class Home extends React.Component {
       )
       .then(result => {
         let {
-          data: { address: address_details, display_name: address_name }
+          data: { address: addressDetails, display_name: addressName }
         } = result;
-        this.setState({ address_details, address_name });
+        this.setState({ addressDetails, addressName });
       })
       .catch(error => console.error(error));
   }
@@ -50,7 +50,7 @@ class Home extends React.Component {
             containerStyle={{ width: undefined, height: undefined }}
             inputStyle={styles.inputs}
             readOnly
-            value={this.state.address_name}
+            value={this.state.addressName}
             label="Localité"
             labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 20 }}
           />
