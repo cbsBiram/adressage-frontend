@@ -9,24 +9,26 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      address_details: {},
-      address_name: "",
+      addressDetails: {},
+      addressName: "",
       code: "",
       selectedItem: []
     };
   }
 
   async componentDidMount() {
+    let { latitude, longitude } = this.props;
+
     await axios
       .get(
-        `https://nominatim.openstreetmap.org/reverse?email=ibrahimabiram@gmail.com&format=json&lat=14.7223758&lon=-17.4640854&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?email=ibrahimabiram@gmail.com&format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
         { headers: { "User-Agent": "frontend-adressage" } }
       )
       .then(result => {
         let {
-          data: { address: address_details, display_name: address_name }
+          data: { address: addressDetails, display_name: addressName }
         } = result;
-        this.setState({ address_details, address_name });
+        this.setState({ addressDetails, addressName });
       })
       .catch(error => console.error(error));
   }
@@ -50,7 +52,7 @@ class Home extends React.Component {
             containerStyle={{ width: undefined, height: undefined }}
             inputStyle={styles.inputs}
             readOnly
-            value={this.state.address_name}
+            value={this.state.addressName}
             label="Localité"
             labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 20 }}
           />
