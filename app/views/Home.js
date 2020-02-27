@@ -1,8 +1,8 @@
 import React from "react";
+import axios from "axios";
 import { StyleSheet, View, ImageBackground, Alert } from "react-native";
 import { Text } from "react-native-elements";
 import Header from "./../sections/Header";
-import axios from "axios";
 import Menu from "../sections/Menu";
 import Inputs from "../sections/Inputs";
 
@@ -111,11 +111,16 @@ class Home extends React.Component {
     Alert.alert("En cours de développement.");
   };
 
+  saveCode = () => {
+    Alert.alert("En cours de développement.");
+  };
+
   render() {
     var { latitude, longitude } = this.props;
     console.log("Lat :", latitude, " Long : ", longitude);
 
-    var { addressName, code, showLoading } = this.state;
+    var { addressName, code } = this.state;
+    var isCodeGenerated = code ? true : false;
 
     return (
       <View style={styles.container}>
@@ -134,8 +139,10 @@ class Home extends React.Component {
             onPressGenerate={this.generateCode}
             buttonGroup={styles.buttonGroup}
             onPressCarnet={this.getCarnet}
+            onPressSave={this.saveCode}
+            code={isCodeGenerated}
           />
-          <Text h4 style={styles.text}>
+          <Text h5 style={styles.text}>
             Appuyez sur le bouton "Générer Code" pour obtenir votre adresse
           </Text>
         </ImageBackground>
@@ -171,7 +178,7 @@ const styles = StyleSheet.create({
     flex: 2,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
+    marginTop: 40,
     marginBottom: 20,
     marginLeft: 5
   },
