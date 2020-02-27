@@ -1,6 +1,6 @@
 import React from "react";
-import Home from "./app/views/Home";
 import { ActivityIndicator } from "react-native";
+import Home from "./app/views/Home";
 
 export default class App extends React.Component {
   constructor() {

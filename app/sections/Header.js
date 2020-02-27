@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 4
   },
   headStyle: {
-    paddingTop: 30,
+    paddingTop: 20,
     paddingBottom: 10,
     paddingRight: 10,
     backgroundColor: "#35605a",
