@@ -16,7 +16,7 @@ const Inputs = ({ inputStyle, addressName, code }) => {
         containerStyle={{ width: undefined, height: undefined }}
         inputStyle={inputStyle}
         value={code}
-        label="Votre code sera généré ici..."
+        label="Code"
         labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 20 }}
       />
     </>

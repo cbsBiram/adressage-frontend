@@ -1,10 +1,17 @@
 import React from "react";
-import axios from "axios";
 import { StyleSheet, View, ImageBackground, Alert } from "react-native";
 import { Text } from "react-native-elements";
+import Toast from "react-native-simple-toast";
 import Header from "./../sections/Header";
 import Menu from "../sections/Menu";
 import Inputs from "../sections/Inputs";
+import {
+  getIsLocalityExists,
+  addAddressInDB
+} from "./../services/addressServices";
+import { reverseGeolocalisation } from "./../services/nominatimServices";
+import addressFormat from "../utils/addressFormat";
+import formatCode from "./../utils/formatCode";
 
 class Home extends React.Component {
   constructor(props) {
@@ -13,17 +20,20 @@ class Home extends React.Component {
       addressDetails: {},
       addressName: "",
       addressType: "",
-      code: ""
+      code: "",
+      codeAlreadyExists: false
     };
   }
 
   componentDidMount() {
-    let { latitude, longitude } = this.props;
-    axios
-      .get(
-        `https://nominatim.openstreetmap.org/reverse?email=ibrahimabiram@gmail.com&format=jsonv2&lat=${latitude}&lon=${longitude}&addressdetails=1`,
-        { headers: { "User-Agent": "frontend-adressage" } }
-      )
+    let { latitude, longitude } = this.props.route.params;
+    reverseGeolocalisation(
+      "ibrahimabiram@gmail.com",
+      "jsonv2",
+      latitude,
+      longitude,
+      1
+    )
       .then(result => {
         let {
           data: {
@@ -37,89 +47,127 @@ class Home extends React.Component {
       .catch(error => console.error(error));
   }
 
-  isLocationCoded = addressName => {};
-
   generateCode = () => {
-    if (this.state.addressDetails) {
-      let { addressType } = this.state;
-      console.log("Adresse:", addressType);
+    this.setState({ loading: true });
+    let { addressName, addressDetails } = this.state;
+    let generatedCode;
 
-      let building = this.state.addressDetails[addressType];
-      console.log("Building", building);
-
-      let {
-        country,
-        state: region,
-        county,
-        city,
-        town,
-        country_code,
-        suburb,
-        road
-      } = this.state.addressDetails;
-
-      if (!region) region = county;
-
-      if (!city) city = town;
-
-      if (!suburb) suburb = road;
-
-      if (country && region && city) {
-        country_code = country_code.toUpperCase();
-        let regionCode = region.toUpperCase().substring(0, 3);
-        let cityCode = city.toUpperCase().substring(0, 2);
-        let suburbCode = suburb.toUpperCase().substring(0, 2);
-
-        let suffixCode;
-        let buildingCode;
-
-        if (building) {
-          buildingCode = building.toUpperCase().substring(0, 2);
-          suffixCode =
-            buildingCode +
-            "_" +
-            Math.random()
-              .toString(36)
-              .substr(2, 2)
-              .toUpperCase();
-        } else {
-          suffixCode = Math.random()
-            .toString(36)
-            .substr(2, 3)
-            .toUpperCase();
-        }
-
-        let generatedCode =
-          country_code +
-          "-" +
-          regionCode +
-          "-" +
-          cityCode +
-          "-" +
-          suburbCode +
-          "-" +
-          suffixCode;
-
-        this.setState({
-          code: generatedCode
+    if (addressName) {
+      getIsLocalityExists(addressName)
+        .then(({ data: { isLocation_exists, address } }) => {
+          generatedCode = isLocation_exists ? address[0][0] : "";
+          this.generateCodeHandler(generatedCode, addressDetails);
+          this.setState({ loading: false });
+        })
+        .catch(error => {
+          console.error(error);
         });
+    }
+  };
+
+  generateCodeHandler = (generatedCode, addressDetails) => {
+    if (generatedCode) {
+      Toast.show("Cette localité existe déjà");
+      this.setState({ code: generatedCode, codeAlreadyExists: true });
+    } else {
+      if (addressDetails) {
+        let { addressType } = this.state;
+        let {
+          country,
+          country_code,
+          region,
+          city,
+          suburb,
+          building
+        } = addressFormat(addressDetails, addressType);
+
+        if (country && region && city) {
+          country_code = country_code.toUpperCase();
+          let regionCode = formatCode(region);
+          let cityCode = formatCode(city);
+          let suburbCode = formatCode(suburb);
+
+          let suffixCode;
+          let buildingCode;
+
+          if (building) {
+            buildingCode = formatCode(building);
+            suffixCode =
+              buildingCode +
+              "_" +
+              Math.random()
+                .toString(36)
+                .substr(2, 2)
+                .toUpperCase();
+          } else {
+            suffixCode = Math.random()
+              .toString(36)
+              .substr(2, 4)
+              .toUpperCase();
+          }
+
+          generatedCode =
+            country_code +
+            "-" +
+            regionCode +
+            "-" +
+            cityCode +
+            "-" +
+            suburbCode +
+            "-" +
+            suffixCode;
+
+          this.setState({
+            code: generatedCode
+          });
+        }
       }
     }
+  };
+
+  saveCode = async e => {
+    e.preventDefault();
+    let {
+      addressName: location_name,
+      code: generated_code,
+      addressDetails,
+      addressType
+    } = this.state;
+    let {
+      country,
+      country_code,
+      region,
+      city,
+      suburb,
+      building: house_number
+    } = addressFormat(addressDetails, addressType);
+
+    let { latitude, longitude } = this.props.route.params;
+
+    let address = {
+      country_code,
+      country,
+      region,
+      city,
+      suburb,
+      house_number,
+      location_name,
+      latitude,
+      longitude,
+      generated_code
+    };
+    await addAddressInDB(address);
+    this.props.navigation.navigate("Details", { location_name });
   };
 
   getCarnet = () => {
     Alert.alert("En cours de développement.");
   };
 
-  saveCode = () => {
-    Alert.alert("En cours de développement.");
-  };
-
   render() {
-    var { latitude, longitude } = this.props;
-    console.log("Lat :", latitude, " Long : ", longitude);
+    // console.log(this.state.code);
 
-    var { addressName, code } = this.state;
+    var { addressName, code, codeAlreadyExists, loading } = this.state;
     var isCodeGenerated = code ? true : false;
 
     return (
@@ -128,7 +176,7 @@ class Home extends React.Component {
 
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/background13.jpg")}
+          source={require("../../assets/road2.webp")}
         >
           <Inputs
             inputStyle={styles.input}
@@ -141,6 +189,8 @@ class Home extends React.Component {
             onPressCarnet={this.getCarnet}
             onPressSave={this.saveCode}
             code={isCodeGenerated}
+            codeAlreadyExists={codeAlreadyExists}
+            loading={loading}
           />
           <Text h5 style={styles.text}>
             Appuyez sur le bouton "Générer Code" pour obtenir votre adresse
@@ -180,7 +230,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 40,
     marginBottom: 20,
-    marginLeft: 5
+    marginLeft: 5,
+    color: "#ffffff"
   },
   image: {
     width: undefined,

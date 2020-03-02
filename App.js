@@ -1,6 +1,12 @@
+import "react-native-gesture-handler";
 import React from "react";
 import { ActivityIndicator } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./app/views/Home";
+import Details from "./app/views/Details";
+
+const Stack = createStackNavigator();
 
 export default class App extends React.Component {
   constructor() {
@@ -39,7 +45,21 @@ export default class App extends React.Component {
 
   render() {
     let { lat, lng } = this.state.where;
-    if (lat && lng) return <Home latitude={lat} longitude={lng} />;
+    if (lat && lng)
+      return (
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home" headerMode="none">
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              initialParams={{ latitude: lat, longitude: lng }}
+              screenProps={{ latitude: lat, longitude: lng }}
+            />
+            <Stack.Screen name="Details" component={Details} />
+            {/* <Home latitude={lat} longitude={lng} /> */}
+          </Stack.Navigator>
+        </NavigationContainer>
+      );
     return (
       <ActivityIndicator size="large" color="#35605a" style={{ flex: 2 }} />
     );

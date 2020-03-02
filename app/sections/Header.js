@@ -16,7 +16,7 @@ export default class Header extends React.Component {
           style={styles.logoStyle}
           source={require("../../assets/logo-figma.png")}
         />
-        <Text style={styles.headText}>--- A définir --</Text>
+        <Text style={styles.headText}>MyHali</Text>
       </View>
     );
   }
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 10,
     paddingRight: 10,
-    backgroundColor: "#35605a",
+    backgroundColor: "#FF8C00",
     flex: 1,
     flexDirection: "row",
     borderBottomWidth: 2,
