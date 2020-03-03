@@ -1,7 +1,7 @@
  export default formatAddress = (addressDetails, addressType) => {
      let {
          country,
-         country_code,
+         //  country_code,
          state: region,
          county,
          city,
@@ -10,11 +10,8 @@
          suburb,
          road,
          street,
-         district,
-         house_number
+         district
      } = addressDetails;
-
-     let building = house_number ? house_number : addressDetails[addressType];
 
      if (!region) region = county;
 
@@ -31,10 +28,9 @@
 
      return {
          country,
-         country_code,
+         //  country_code,
          region,
          city,
-         suburb,
-         building
+         suburb
      }
  }
