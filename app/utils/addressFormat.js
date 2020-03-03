@@ -20,7 +20,7 @@
 
      if (!city) {
          if (town) city = town;
-         else city = locality
+         else city = locality;
      }
 
      if (!suburb) {

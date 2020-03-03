@@ -8,7 +8,7 @@ const formatCode = (str) => {
         }
         if (str.search("-")) {
             var res = str.split(" ")
-            var charTab = res.map(item => item.charAt(0))
+            var charTab = res.map(item => item.trim().charAt(0))
             newCode = charTab.join("")
         }
     } else {
