@@ -108,13 +108,10 @@ class Home extends React.Component {
       addressDetails,
       addressType
     } = this.state;
-    let {
-      country,
-      region,
-      city,
-      suburb,
-      building: house_number
-    } = addressFormat(addressDetails, addressType);
+    let { country, region, city, suburb } = addressFormat(
+      addressDetails,
+      addressType
+    );
 
     let { latitude, longitude } = this.props.route.params;
 
@@ -123,7 +120,6 @@ class Home extends React.Component {
       region,
       city,
       suburb,
-      house_number,
       location_name,
       latitude,
       longitude,
