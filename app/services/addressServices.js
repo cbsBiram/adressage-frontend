@@ -1,10 +1,14 @@
 import http from './httpServices';
+import { apiConfig } from '../../config'
 
-const apiEndpoint1 = '/frontend/isLocation_exists/';
-const apiEndpoint2 = '/frontend/save_code/';
-const apiEndpoint3 = '/frontend/get_address/';
+const apiUrl = apiConfig.baseUrl;
+
+const apiEndpoint1 = `${apiUrl}/isLocation_exists/`;
+const apiEndpoint2 = `${apiUrl}/save_code/`;
+const apiEndpoint3 = `${apiUrl}/get_address/`;
 
 export function getIsLocalityExists(location) {
+    console.log('EP', apiEndpoint1);
     return http.get(apiEndpoint1, {
         params: {
             location

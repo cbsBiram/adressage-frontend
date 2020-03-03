@@ -72,50 +72,25 @@ class Home extends React.Component {
     } else {
       if (addressDetails) {
         let { addressType } = this.state;
-        let {
-          country,
-          country_code,
-          region,
-          city,
-          suburb,
-          building
-        } = addressFormat(addressDetails, addressType);
+        let { country, region, city, suburb, building } = addressFormat(
+          addressDetails,
+          addressType
+        );
 
         if (country && region && city) {
-          country_code = country_code.toUpperCase();
           let regionCode = formatCode(region);
           let cityCode = formatCode(city);
           let suburbCode = formatCode(suburb);
 
           let suffixCode;
-          let buildingCode;
 
-          if (building) {
-            buildingCode = formatCode(building);
-            suffixCode =
-              buildingCode +
-              "_" +
-              Math.random()
-                .toString(36)
-                .substr(2, 2)
-                .toUpperCase();
-          } else {
-            suffixCode = Math.random()
-              .toString(36)
-              .substr(2, 4)
-              .toUpperCase();
-          }
+          suffixCode = Math.random()
+            .toString(36)
+            .substr(2, 4)
+            .toUpperCase();
 
           generatedCode =
-            country_code +
-            "-" +
-            regionCode +
-            "-" +
-            cityCode +
-            "-" +
-            suburbCode +
-            "-" +
-            suffixCode;
+            regionCode + "-" + cityCode + "-" + suburbCode + "-" + suffixCode;
 
           this.setState({
             code: generatedCode
@@ -135,7 +110,6 @@ class Home extends React.Component {
     } = this.state;
     let {
       country,
-      country_code,
       region,
       city,
       suburb,
@@ -145,7 +119,6 @@ class Home extends React.Component {
     let { latitude, longitude } = this.props.route.params;
 
     let address = {
-      country_code,
       country,
       region,
       city,
@@ -165,8 +138,6 @@ class Home extends React.Component {
   };
 
   render() {
-    // console.log(this.state.code);
-
     var { addressName, code, codeAlreadyExists, loading } = this.state;
     var isCodeGenerated = code ? true : false;
 
