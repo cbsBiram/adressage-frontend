@@ -8,8 +8,11 @@ const Menu = ({
   onPressGenerate,
   onPressCarnet,
   onPressSave,
-  code
+  code,
+  codeAlreadyExists,
+  loading
 }) => {
+  console.log("Loading status:", loading);
   return (
     <>
       <View style={buttonGroup}>
@@ -17,11 +20,12 @@ const Menu = ({
           buttonStyle={{
             width: 130,
             marginTop: 10,
-            backgroundColor: "#35605a"
+            backgroundColor: "#FF8C00"
           }}
           title="Générer Code"
           titleStyle={{ fontSize: 20 }}
           onPress={() => onPressGenerate()}
+          loading={loading}
           type="solid"
         />
         <Button
@@ -34,27 +38,27 @@ const Menu = ({
             <Icon
               name="address-book"
               size={30}
-              color="#35605a"
+              color="#FF8C00"
               style={{ paddingLeft: 16 }}
             />
           }
           title="Carnet d'Adresse"
-          titleStyle={{ fontSize: 20, color: "#35605a" }}
+          titleStyle={{ fontSize: 20, color: "#FF8C00" }}
           onPress={() => onPressCarnet()}
           type="solid"
         />
       </View>
-      {code && (
+      {code && codeAlreadyExists !== true && (
         <View style={buttonGroup}>
           <Button
             buttonStyle={{
               width: 130,
               marginTop: 20,
-              backgroundColor: "#35605a"
+              backgroundColor: "#FF8C00"
             }}
             title="Enregistrer Code"
             titleStyle={{ fontSize: 20 }}
-            onPress={() => onPressSave()}
+            onPress={e => onPressSave(e)}
             type="solid"
           />
         </View>
