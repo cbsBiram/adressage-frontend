@@ -73,6 +73,7 @@ module.exports = function(api) {
 ```
 ### 5- Consulter le fichier ./app/services/httpServices.js pour voir comment utiliser la variable créée
 
-## Lien utile pour les commandes git: https://gitexplorer.com/
+## Lien utile pour les commandes git:
+En apprendre plus [ici](https://gitexplorer.com/) 
 
 ---
