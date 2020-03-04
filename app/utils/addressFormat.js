@@ -1,7 +1,6 @@
- export default formatAddress = (addressDetails, addressType) => {
+ export default formatAddress = (addressDetails) => {
      let {
          country,
-         //  country_code,
          state: region,
          county,
          city,
@@ -21,16 +20,21 @@
      }
 
      if (!suburb) {
-         if (road) suburb = road
+         if (road) suburb = road;
          else if (!road && street) suburb = street;
          else suburb = district;
      };
 
+     if (!road) {
+         if (street) road = street;
+         else if (!street && district) road = district
+         else if (!district && suburb) road = suburb
+     }
+
      return {
          country,
-         //  country_code,
          region,
          city,
-         suburb
+         road
      }
  }
