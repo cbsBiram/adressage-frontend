@@ -8,16 +8,17 @@ const Inputs = ({ inputStyle, addressName, code }) => {
         containerStyle={{ width: undefined, height: undefined }}
         inputStyle={inputStyle}
         readOnly
+        selection={{ start: 0 }}
         value={addressName}
         label="Localité"
-        labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 20 }}
+        labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 15 }}
       />
       <Input
         containerStyle={{ width: undefined, height: undefined }}
         inputStyle={inputStyle}
         value={code}
         label="Code"
-        labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 20 }}
+        labelStyle={{ color: "#ffffff", marginTop: 15, fontSize: 15 }}
       />
     </>
   );

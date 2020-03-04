@@ -67,20 +67,17 @@ class Home extends React.Component {
 
   generateCodeHandler = (generatedCode, addressDetails) => {
     if (generatedCode) {
-      Toast.show("Cette localité existe déjà");
+      Toast.show("Cette localité existe déjà !");
       this.setState({ code: generatedCode, codeAlreadyExists: true });
     } else {
       if (addressDetails) {
-        let { addressType } = this.state;
-        let { country, region, city, suburb, building } = addressFormat(
-          addressDetails,
-          addressType
-        );
+        let { country, region, city, road } = addressFormat(addressDetails);
+        console.log("Road", road);
 
         if (country && region && city) {
           let regionCode = formatCode(region);
           let cityCode = formatCode(city);
-          let suburbCode = formatCode(suburb);
+          let roadCode = formatCode(road);
 
           let suffixCode;
 
@@ -90,7 +87,7 @@ class Home extends React.Component {
             .toUpperCase();
 
           generatedCode =
-            regionCode + "-" + cityCode + "-" + suburbCode + "-" + suffixCode;
+            regionCode + "-" + cityCode + "-" + roadCode + "-" + suffixCode;
 
           this.setState({
             code: generatedCode
@@ -105,13 +102,9 @@ class Home extends React.Component {
     let {
       addressName: location_name,
       code: generated_code,
-      addressDetails,
-      addressType
+      addressDetails
     } = this.state;
-    let { country, region, city, suburb } = addressFormat(
-      addressDetails,
-      addressType
-    );
+    let { country, region, city, road } = addressFormat(addressDetails);
 
     let { latitude, longitude } = this.props.route.params;
 
@@ -119,7 +112,7 @@ class Home extends React.Component {
       country,
       region,
       city,
-      suburb,
+      road,
       location_name,
       latitude,
       longitude,
@@ -178,12 +171,12 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 5,
     padding: 5,
-    height: 70,
+    height: 60,
     backgroundColor: "#d3d3d3d3",
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
-    fontSize: 20
+    fontSize: 17
   },
   buttonGroup: {
     flexDirection: "row",

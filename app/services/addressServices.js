@@ -8,7 +8,6 @@ const apiEndpoint2 = `${apiUrl}/save_code/`;
 const apiEndpoint3 = `${apiUrl}/get_address/`;
 
 export function getIsLocalityExists(location) {
-    console.log('EP', apiEndpoint1);
     return http.get(apiEndpoint1, {
         params: {
             location
