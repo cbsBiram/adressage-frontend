@@ -13,18 +13,22 @@ const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
         positionLat += 1;
         if (i >= boundingBoxPoint[1])
             break;
+        else {
+            for (var y in _.range(boundingBoxRoad[2], boundingBoxRoad[3], stepLong)) {
+                positionLong += 1;
+                if (y >= boundingBoxPoint[3])
+                    break;
+            }
+        }
     }
+
+    console.log('Latitude Position:', stepLat);
+    console.log('Longitude Position:', stepLong);
+
     firstPart = positionLat;
-
-    for (var i in _.range(boundingBoxRoad[2], boundingBoxRoad[3], stepLong)) {
-        positionLong += 1;
-        if (i >= boundingBoxPoint[3])
-            break;
-    }
-
     if (positionLong >= 100) {
-        lastPart = (positionLong - 99) + "b";
-    } else lastPart = positionLong + "a";
+        lastPart = (positionLong - 99) + "B";
+    } else lastPart = positionLong + "A";
 
     code = firstPart + lastPart;
     return code;
