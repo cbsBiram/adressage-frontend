@@ -30,7 +30,6 @@ export default class Details extends React.Component {
         console.log(data[0].city);
         let { country, region, city, suburb, generated_code } = data[0];
         this.setState({ country, region, city, suburb, generated_code });
-        Toast.show("Votre code a bien été enregistré");
       })
       .catch(error => console.error(error));
   }
@@ -54,7 +53,10 @@ export default class Details extends React.Component {
           source={require("../../assets/road2.webp")}
         >
           <View style={{ paddingLeft: 10, paddingTop: 20 }}>
-            <View style={{ paddingTop: 20 }}>
+            <Text style={material.titleWhite}>
+              Vos informations ont bien été enregistrées.
+            </Text>
+            <View style={{ paddingTop: 30 }}>
               <Text style={material.titleWhite}>Pays: {country}</Text>
               <Text style={material.titleWhite}>Région: {region}</Text>
               <Text style={material.titleWhite}>Ville: {city}</Text>

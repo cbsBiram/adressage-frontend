@@ -9,9 +9,13 @@ import {
   getIsLocalityExists,
   addAddressInDB
 } from "./../services/addressServices";
-import { reverseGeolocalisation } from "./../services/nominatimServices";
+import {
+  reverseGeolocalisation,
+  getDistrictLocation
+} from "./../services/nominatimServices";
 import addressFormat from "../utils/addressFormat";
 import formatCode from "./../utils/formatCode";
+import getHouseNumber from "./../utils/getHouseNumber";
 
 class Home extends React.Component {
   constructor(props) {
@@ -21,7 +25,8 @@ class Home extends React.Component {
       addressName: "",
       addressType: "",
       code: "",
-      codeAlreadyExists: false
+      codeAlreadyExists: false,
+      bBoxDistrict: null
     };
   }
 
@@ -39,10 +44,16 @@ class Home extends React.Component {
           data: {
             address: addressDetails,
             display_name: addressName,
-            type: addressType
+            type: addressType,
+            boundingbox
           }
         } = result;
-        this.setState({ addressDetails, addressName, addressType });
+        this.setState({
+          addressDetails,
+          addressName,
+          addressType,
+          boundingbox
+        });
       })
       .catch(error => console.error(error));
   }
@@ -65,36 +76,41 @@ class Home extends React.Component {
     }
   };
 
-  generateCodeHandler = (generatedCode, addressDetails) => {
+  generateCodeHandler = async (generatedCode, addressDetails) => {
     if (generatedCode) {
       Toast.show("Cette localité existe déjà !");
       this.setState({ code: generatedCode, codeAlreadyExists: true });
     } else {
       if (addressDetails) {
         let { country, region, city, road } = addressFormat(addressDetails);
-        console.log("Road", road);
+
+        // load the bounding box of the road
+        await this.getDistrict(road);
+        let { bBoxDistrict, boundingbox } = this.state;
+        let suffixCode = getHouseNumber(boundingbox, bBoxDistrict);
 
         if (country && region && city) {
           let regionCode = formatCode(region);
           let cityCode = formatCode(city);
           let roadCode = formatCode(road);
 
-          let suffixCode;
-
-          suffixCode = Math.random()
-            .toString(36)
-            .substr(2, 4)
-            .toUpperCase();
-
           generatedCode =
             regionCode + "-" + cityCode + "-" + roadCode + "-" + suffixCode;
-
           this.setState({
             code: generatedCode
           });
         }
       }
     }
+  };
+
+  getDistrict = async road => {
+    await getDistrictLocation("jsonv2", road, "sn")
+      .then(({ data }) => {
+        let { boundingbox: bBoxDistrict } = data[0];
+        this.setState({ bBoxDistrict });
+      })
+      .catch(error => console.error(error));
   };
 
   saveCode = async e => {
