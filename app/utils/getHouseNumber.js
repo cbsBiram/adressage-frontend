@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
+    console.log('bbox: ', boundingBoxRoad)
     const stepLat = Number(boundingBoxPoint[1]) - Number(boundingBoxPoint[0])
     const stepLong = Number(boundingBoxPoint[3]) - Number(boundingBoxPoint[2])
 
