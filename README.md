@@ -50,12 +50,8 @@ git commit -m "<Message>"
 git push
 ```
 
-## IV-a) COnfiguration du fichier config.js
 
-Se rendre sur le fichier config.js et remplacer l'adresse ip par sa propre adresse ip
-
-
-## IV-b) Variables d'environnement
+## IV) Variables d'environnement
 
 
 Configurer des variables d'environnements nous permet de pouvoir utiliser certaines variables en fonction de l'environnement de développement qui peut être en production ou en développement.
@@ -66,7 +62,7 @@ Ex: API Key, password etc.
 ### 2- Ouvrir ce fichier et l'éditer comme suit: 
 
 ```sh
-MA_VARIBALE = "sbksnlnsls" ## Dans notre cas nous voulons consulter l'api de notre backend qui se trouve en local
+API_ADDRESS = "https://..." #Veuillez me contacter pour disposer de l'url du backend déployée en production.
 ```
 
 ### 3- Installer react-native-dotenv
