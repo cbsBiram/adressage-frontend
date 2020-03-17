@@ -26,7 +26,8 @@ class Home extends React.Component {
       addressType: "",
       code: "",
       codeAlreadyExists: false,
-      bBoxDistrict: null
+      bBoxDistrict: null,
+      loading: false
     };
   }
 
