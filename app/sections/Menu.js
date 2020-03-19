@@ -1,12 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { Button } from "react-native-elements";
-import Icon from "react-native-vector-icons/FontAwesome";
+// import Icon from "react-native-vector-icons/FontAwesome";
 
 const Menu = ({
   buttonGroup,
   onPressGenerate,
-  onPressCarnet,
   onPressSave,
   code,
   codeAlreadyExists,
@@ -28,7 +27,7 @@ const Menu = ({
           loading={loading}
           type="solid"
         />
-        <Button
+        {/* <Button
           buttonStyle={{
             width: 140,
             marginTop: 10,
@@ -46,7 +45,7 @@ const Menu = ({
           titleStyle={{ fontSize: 20, color: "#FF8C00" }}
           onPress={() => onPressCarnet()}
           type="solid"
-        />
+        /> */}
       </View>
       {code && codeAlreadyExists !== true && (
         <View style={buttonGroup}>

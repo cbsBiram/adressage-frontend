@@ -1,15 +1,4 @@
 import axios from 'axios';
-import Toast from 'react-native-simple-toast';
-
-axios.interceptors.response.use(null, (error) => {
-    const expectedError = error.response && error.response.status >= 400 && error.response.status < 500;
-    if (!expectedError) {
-        console.log('Error', error);
-        Toast.show('Unexpected error happened');
-    }
-    return Promise.reject(error);
-});
-
 
 
 export default {

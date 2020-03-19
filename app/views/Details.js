@@ -31,6 +31,7 @@ export default class Details extends React.Component {
         let { country, region, city, suburb, generated_code } = data[0];
         this.setState({ country, region, city, suburb, generated_code });
       })
+      .then(() => alert("Code enregistré!"))
       .catch(error => console.error(error));
   }
 

@@ -139,9 +139,6 @@ class Home extends React.Component {
     this.props.navigation.navigate("Details", { location_name });
   };
 
-  getCarnet = () => {
-    Alert.alert("En cours de développement.");
-  };
 
   render() {
     var { addressName, code, codeAlreadyExists, loading } = this.state;
@@ -163,7 +160,6 @@ class Home extends React.Component {
           <Menu
             onPressGenerate={this.generateCode}
             buttonGroup={styles.buttonGroup}
-            onPressCarnet={this.getCarnet}
             onPressSave={this.saveCode}
             code={isCodeGenerated}
             codeAlreadyExists={codeAlreadyExists}
