@@ -66,8 +66,8 @@ class Home extends React.Component {
 
     if (addressName) {
       getIsLocalityExists(addressName)
-        .then(({ data: { isLocation_exists, address } }) => {
-          generatedCode = isLocation_exists ? address[0][0] : "";
+        .then(({ data: { isLocation_exists, code } }) => {
+          generatedCode = isLocation_exists ? code : "";
           this.generateCodeHandler(generatedCode, addressDetails);
           this.setState({ loading: false });
         })
@@ -138,7 +138,6 @@ class Home extends React.Component {
     await addAddressInDB(address);
     this.props.navigation.navigate("Details", { location_name });
   };
-
 
   render() {
     var { addressName, code, codeAlreadyExists, loading } = this.state;

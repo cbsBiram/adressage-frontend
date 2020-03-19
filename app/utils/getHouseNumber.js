@@ -18,9 +18,10 @@ const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
         }
     }
 
-    if (housePosition >= 1000) {
+    if (housePosition >= 1000 && housePosition < 2000)
         code = (housePosition - 999) + "B";
-    } else code = housePosition + "A";
+    else if (housePosition >= 2000) code = (housePosition - 1999) + "C";
+    else code = housePosition + "A";
 
     return code;
 }
