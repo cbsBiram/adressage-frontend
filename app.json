@@ -28,7 +28,7 @@
     },
     "android": {
       "package": "com.origynslabs.myhali",
-      "versionCode": "1.0.0"
+      "versionCode": 1
     },
     "description": ""
   }
