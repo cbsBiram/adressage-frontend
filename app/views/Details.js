@@ -27,8 +27,7 @@ export default class Details extends React.Component {
 
     getAddress(location_name)
       .then(({ data }) => {
-        console.log(data[0].city);
-        let { country, region, city, suburb, generated_code } = data[0];
+        let { country, region, city, suburb, generated_code } = data;
         this.setState({ country, region, city, suburb, generated_code });
       })
       .then(() => alert("Code enregistré!"))
