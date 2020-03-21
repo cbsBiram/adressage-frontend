@@ -86,17 +86,24 @@ class Home extends React.Component {
         let { country, region, city, road } = addressFormat(addressDetails);
 
         // load the bounding box of the road
-        await this.getDistrict(road);
+        if (road) await this.getDistrict(road);
+        else await this.getDistrict(city);
+
         let { bBoxDistrict, boundingbox } = this.state;
         let suffixCode = getHouseNumber(boundingbox, bBoxDistrict);
 
         if (country && region && city) {
           let regionCode = formatCode(region);
           let cityCode = formatCode(city);
-          let roadCode = formatCode(road);
 
-          generatedCode =
-            regionCode + "-" + cityCode + "-" + roadCode + "-" + suffixCode;
+          let roadCode;
+          if (road) roadCode = formatCode(road);
+
+          if (road)
+            generatedCode =
+              regionCode + "-" + cityCode + "-" + roadCode + "-" + suffixCode;
+          else generatedCode = regionCode + "-" + cityCode + "-" + suffixCode;
+
           this.setState({
             code: generatedCode
           });

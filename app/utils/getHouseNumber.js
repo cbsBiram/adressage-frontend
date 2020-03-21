@@ -1,3 +1,5 @@
+import { letters } from "./letters"
+
 const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
     const step = 0.001
 
@@ -18,10 +20,16 @@ const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
         }
     }
 
-    if (housePosition >= 1000 && housePosition < 2000)
-        code = (housePosition - 999) + "B";
-    else if (housePosition >= 2000) code = (housePosition - 1999) + "C";
-    else code = housePosition + "A";
+    if (housePosition < 1000) code = housePosition + "A";
+    else {
+        for (var key in letters) {
+            if (housePosition < letters[key] * 1000) {
+                var numericPart = housePosition - (((letters[key] - 1) * 1000) - 1);
+                code = numericPart + key
+                break;
+            }
+        }
+    }
 
     return code;
 }
