@@ -1,6 +1,8 @@
 ## I- Installation
 
-Assurez-vous que python et pip sont installés sur votre machine
+
+Assurez-vous que npm est installé sur votre machine.
+
 Cloner le projet
 
 ```sh
