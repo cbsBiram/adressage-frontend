@@ -4,7 +4,6 @@ import { ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./app/views/Home";
-import Details from "./app/views/Details";
 
 const Stack = createStackNavigator();
 
@@ -55,8 +54,6 @@ export default class App extends React.Component {
               initialParams={{ latitude: lat, longitude: lng }}
               screenProps={{ latitude: lat, longitude: lng }}
             />
-            <Stack.Screen name="Details" component={Details} />
-            {/* <Home latitude={lat} longitude={lng} /> */}
           </Stack.Navigator>
         </NavigationContainer>
       );

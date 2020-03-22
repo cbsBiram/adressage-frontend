@@ -1,9 +1,10 @@
 import http from './httpServices';
-import { API_ADDRESS } from 'react-native-dotenv';
+import getEnvVars from './../../environment';
 
-const apiEndpoint1 = `${API_ADDRESS}/isLocation_exists/`;
-const apiEndpoint2 = `${API_ADDRESS}/save_code/`;
-const apiEndpoint3 = `${API_ADDRESS}/get_address/`;
+const { apiUrl } = getEnvVars();
+
+const apiEndpoint1 = `${apiUrl}/isLocation_exists/`;
+const apiEndpoint2 = `${apiUrl}/save_code/`;
 
 export function getIsLocalityExists(location) {
     console.log(apiEndpoint1)
@@ -16,12 +17,4 @@ export function getIsLocalityExists(location) {
 
 export function addAddressInDB(address) {
     return http.post(apiEndpoint2, address);
-}
-
-export function getAddress(location) {
-    return http.get(apiEndpoint3, {
-        params: {
-            location
-        }
-    });
 }

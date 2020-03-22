@@ -1,6 +1,5 @@
 ## I- Installation
 
-
 Assurez-vous que python et pip sont installés sur votre machine
 Cloner le projet
 
@@ -17,9 +16,7 @@ Installer les dépendances
  npm start # you can also use: expo start pour démarrer l'application
 ```
 
-
 ## II- Les branches
-
 
 ### 1- Nouvelle branche
 
@@ -34,61 +31,44 @@ git branch  # pour vérifier que l'on est bien placé sur la branche créée
 git checkout <Branch_Name>
 ```
 
-
 ## III- Versioning du code
 
-
 ### Pour récupérer les changements effectués sur la branche Master
+
 ```sh
 git pull origin master
 ```
 
 ### Pour pusher les modifications locales
+
 ```sh
 git add .
 git commit -m "<Message>"
 git push
 ```
 
-
 ## IV) Variables d'environnement
-
 
 Configurer des variables d'environnements nous permet de pouvoir utiliser certaines variables en fonction de l'environnement de développement qui peut être en production ou en développement.
 Ex: API Key, password etc.
 
-### 1- Tout d'abord créer le fichier ".env" à la racine du projet, au même niveau que "package.json".
+### 1- Tout d'abord créer le fichier "environment.js" à la racine du projet, au même niveau que "package.json" et l'ajouter au .gitignore (ainsi aucune information clé ne sera jamais publiée sur GitHub).
 
-### 2- Ouvrir ce fichier et l'éditer comme suit: 
+### 2- Ouvrir ce fichier et l'éditer comme indiqué [ici](https://alxmrtnz.com/thoughts/2019/03/12/environment-variables-and-workflow-in-expo.html):
 
-```sh
-API_ADDRESS = "https://..." #Veuillez me contacter pour disposer de l'url du backend déployée en production.
-```
-
-### 3- Installer react-native-dotenv
+### 3- Enlever les lignes suivantes du fichier:
 
 ```sh
-npm i react-native-dotenv
+import { Platform } from "react-native";
+
+const localhost = Platform.OS === "ios" ? "localhost:8080" : "10.0.2.2:8080";
+
 ```
 
-### 4- Configurer le fichier babel.config.js pour qu'il ressemble à:
-
-```sh
-module.exports = function(api) {
-    api.cache(true);
-    return {
-        presets: ['babel-preset-expo',
-            'module:metro-react-native-babel-preset',
-            'module:react-native-dotenv'
-        ],
-    };
-};
-```
-
-### 5- Consulter le fichier ./app/services/httpServices.js pour voir comment utiliser la variable créée
+### 5- Consulter le fichier ./app/services/addressServices.js pour voir comment utiliser la variable créée
 
 ## Lien utile pour les commandes git:
 
-En apprendre plus [ici](https://gitexplorer.com/) 
+En apprendre plus [ici](https://gitexplorer.com/)
 
 ---
