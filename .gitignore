@@ -1,6 +1,7 @@
 # Expo
 .expo
 __generated__
+*.jks
 
 # macOS
 .DS_Store
