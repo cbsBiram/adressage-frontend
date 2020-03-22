@@ -129,9 +129,7 @@ class Home extends React.Component {
       addressDetails
     } = this.state;
     let { country, region, city, road } = addressFormat(addressDetails);
-
     let { latitude, longitude } = this.props.route.params;
-
     let address = {
       country,
       region,
@@ -142,8 +140,13 @@ class Home extends React.Component {
       longitude,
       generated_code
     };
-    await addAddressInDB(address);
-    this.props.navigation.navigate("Details", { location_name });
+
+    await addAddressInDB(address)
+      .then(() => {
+        this.setState({ codeAlreadyExists: true });
+        Alert.alert("Votre code a bien été enregistré !!!");
+      })
+      .catch(err => console.error(err));
   };
 
   render() {
