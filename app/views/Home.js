@@ -86,8 +86,11 @@ class Home extends React.Component {
         let { country, region, city, road } = addressFormat(addressDetails);
 
         // load the bounding box of the road
-        if (road) await this.getDistrict(road);
-        else await this.getDistrict(city);
+        let query;
+        if (road) query = region + "," + city + "," + road;
+        else query = region + "," + city;
+
+        await this.getDistrict(query);
 
         let { bBoxDistrict, boundingbox } = this.state;
         let suffixCode = getHouseNumber(boundingbox, bBoxDistrict);
@@ -112,8 +115,8 @@ class Home extends React.Component {
     }
   };
 
-  getDistrict = async road => {
-    await getDistrictLocation("jsonv2", road, "sn")
+  getDistrict = async query => {
+    await getDistrictLocation("jsonv2", query, "sn")
       .then(({ data }) => {
         let { boundingbox: bBoxDistrict } = data[0];
         this.setState({ bBoxDistrict });
