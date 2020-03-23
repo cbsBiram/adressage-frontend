@@ -12,7 +12,10 @@
          district
      } = addressDetails;
 
-     if (!region) region = county;
+     if (!region) {
+         region = city;
+         city = county;
+     }
 
      if (!city) {
          if (town) city = town;
