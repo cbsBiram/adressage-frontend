@@ -1,9 +1,9 @@
 import { letters } from "./letters"
 
 const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
-    const latStep = 0.0004;
-    const longStep = 0.0005;
-    const unitOfChange = 1000;
+    const latStep = 0.0001;
+    const longStep = 0.0002;
+    const unitOfChange = 2000;
 
     let code;
     let housePosition = 0;
