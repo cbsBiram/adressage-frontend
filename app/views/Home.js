@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, View, ImageBackground, Alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Text } from "react-native-elements";
 import Toast from "react-native-simple-toast";
 import Header from "./../sections/Header";
@@ -7,11 +13,11 @@ import Menu from "../sections/Menu";
 import Inputs from "../sections/Inputs";
 import {
   getIsLocalityExists,
-  addAddressInDB
+  addAddressInDB,
 } from "./../services/addressServices";
 import {
   reverseGeolocalisation,
-  getDistrictLocation
+  getDistrictLocation,
 } from "./../services/nominatimServices";
 import addressFormat from "../utils/addressFormat";
 import formatCode from "./../utils/formatCode";
@@ -21,17 +27,32 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      ready: false,
+      where: { lat: null, lng: null },
+      error: null,
       addressDetails: {},
       addressName: "",
       addressType: "",
       code: "",
       codeAlreadyExists: false,
       bBoxDistrict: null,
-      loading: false
+      loading: false,
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    let geoOptions = {
+      enableHighAccuracy: true,
+      timeOut: 10000,
+      maximumAge: 5000,
+    };
+    this.setState({ ready: false });
+    await navigator.geolocation.getCurrentPosition(
+      this.geoSuccess,
+      this.geoFailure,
+      geoOptions
+    );
+
     let { latitude, longitude } = this.props.route.params;
     reverseGeolocalisation(
       "ibrahimabiram@gmail.com",
@@ -40,24 +61,35 @@ class Home extends React.Component {
       longitude,
       1
     )
-      .then(result => {
+      .then((result) => {
         let {
           data: {
             address: addressDetails,
             display_name: addressName,
             type: addressType,
-            boundingbox
-          }
+            boundingbox,
+          },
         } = result;
         this.setState({
           addressDetails,
           addressName,
           addressType,
-          boundingbox
+          boundingbox,
         });
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   }
+
+  geoSuccess = (position) => {
+    this.setState({
+      ready: true,
+      where: { lat: position.coords.latitude, lng: position.coords.longitude },
+    });
+  };
+
+  geoFailure = (err) => {
+    this.setState({ error: err.message });
+  };
 
   generateCode = () => {
     this.setState({ loading: true });
@@ -71,7 +103,7 @@ class Home extends React.Component {
           this.generateCodeHandler(generatedCode, addressDetails);
           this.setState({ loading: false });
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     }
@@ -108,28 +140,28 @@ class Home extends React.Component {
           else generatedCode = regionCode + "-" + cityCode + "-" + suffixCode;
 
           this.setState({
-            code: generatedCode
+            code: generatedCode,
           });
         }
       }
     }
   };
 
-  getDistrict = async query => {
+  getDistrict = async (query) => {
     await getDistrictLocation("jsonv2", query, "sn")
       .then(({ data }) => {
         let { boundingbox: bBoxDistrict } = data[0];
         this.setState({ bBoxDistrict });
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   };
 
-  saveCode = async e => {
+  saveCode = async (e) => {
     e.preventDefault();
     let {
       addressName: location_name,
       code: generated_code,
-      addressDetails
+      addressDetails,
     } = this.state;
     let { country, region, city, road } = addressFormat(addressDetails);
     let { latitude, longitude } = this.props.route.params;
@@ -141,7 +173,7 @@ class Home extends React.Component {
       location_name,
       latitude,
       longitude,
-      generated_code
+      generated_code,
     };
 
     await addAddressInDB(address)
@@ -149,12 +181,17 @@ class Home extends React.Component {
         this.setState({ codeAlreadyExists: true });
         Alert.alert("Votre code a bien été enregistré !!!");
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   render() {
-    var { addressName, code, codeAlreadyExists, loading } = this.state;
+    var { addressName, code, codeAlreadyExists, loading, where } = this.state;
     var isCodeGenerated = code ? true : false;
+
+    if (!where.lat || !where.lng)
+      return (
+        <ActivityIndicator size="large" color="#35605a" style={{ flex: 2 }} />
+      );
 
     return (
       <View style={styles.container}>
@@ -191,7 +228,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   input: {
     marginTop: 5,
@@ -201,13 +238,13 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
-    fontSize: 17
+    fontSize: 17,
   },
   buttonGroup: {
     flexDirection: "row",
     flex: 1,
     justifyContent: "space-around",
-    marginTop: 15
+    marginTop: 15,
   },
   text: {
     flex: 2,
@@ -216,13 +253,13 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 20,
     marginLeft: 5,
-    color: "#ffffff"
+    color: "#ffffff",
   },
   image: {
     width: undefined,
     height: undefined,
-    flex: 8
-  }
+    flex: 8,
+  },
 });
 
 export default Home;
