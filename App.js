@@ -13,7 +13,7 @@ export default class App extends React.Component {
     this.state = {
       ready: false,
       where: { lat: null, lng: null },
-      error: null
+      error: null,
     };
   }
 
@@ -21,7 +21,7 @@ export default class App extends React.Component {
     let geoOptions = {
       enableHighAccuracy: true,
       timeOut: 10000,
-      maximumAge: 5000
+      maximumAge: 5000,
     };
     this.setState({ ready: false });
     navigator.geolocation.getCurrentPosition(
@@ -31,14 +31,14 @@ export default class App extends React.Component {
     );
   }
 
-  geoSuccess = position => {
+  geoSuccess = (position) => {
     this.setState({
       ready: true,
-      where: { lat: position.coords.latitude, lng: position.coords.longitude }
+      where: { lat: position.coords.latitude, lng: position.coords.longitude },
     });
   };
 
-  geoFailure = err => {
+  geoFailure = (err) => {
     this.setState({ error: err.message });
   };
 
