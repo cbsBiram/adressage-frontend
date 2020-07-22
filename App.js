@@ -1,9 +1,10 @@
-import "react-native-gesture-handler";
 import React from "react";
-import { ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Home from "./app/views/Home";
+
+import AppActivityIndicator from "./app/components/AppActivityIndicator";
+import HomeScreen from "./app/screens/HomeScreen";
+import RecordAudioScreen from "./app/screens/RecordAudioScreen";
 
 const Stack = createStackNavigator();
 
@@ -31,10 +32,10 @@ export default class App extends React.Component {
     );
   }
 
-  geoSuccess = (position) => {
+  geoSuccess = ({ coords }) => {
     this.setState({
       ready: true,
-      where: { lat: position.coords.latitude, lng: position.coords.longitude },
+      where: { lat: coords.latitude, lng: coords.longitude },
     });
   };
 
@@ -47,18 +48,16 @@ export default class App extends React.Component {
     if (lat && lng)
       return (
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Home" headerMode="none">
+          <Stack.Navigator headerMode="none">
             <Stack.Screen
               name="Home"
-              component={Home}
+              component={HomeScreen}
               initialParams={{ latitude: lat, longitude: lng }}
-              screenProps={{ latitude: lat, longitude: lng }}
             />
+            <Stack.Screen name="RecordAudio" component={RecordAudioScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       );
-    return (
-      <ActivityIndicator size="large" color="#35605a" style={{ flex: 2 }} />
-    );
+    return <AppActivityIndicator visible={true} />;
   }
 }

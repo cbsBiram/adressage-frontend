@@ -33,7 +33,7 @@ const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
             }
         }
     }
-
+    if (code === undefined) code = "1A"
     return code;
 }
 

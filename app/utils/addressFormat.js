@@ -2,6 +2,7 @@
      let {
          country,
          state: region,
+         region: region2,
          county,
          city,
          locality,
@@ -9,17 +10,23 @@
          suburb,
          road,
          street,
-         district
+         district,
+         hamlet,
+         village
      } = addressDetails;
 
      if (!region) {
-         region = city;
-         city = county;
+         if (region2) region = region2
+         else {
+             region = city;
+         }
      }
 
      if (!city) {
-         if (town) city = town;
-         else city = locality;
+         if (county) city = county;
+         else if (town) city = town;
+         else if (locality) city = locality;
+         else city = village
      }
 
      if (!suburb) {
@@ -32,6 +39,7 @@
          if (street) road = street;
          else if (!street && district) road = district
          else if (!district && suburb) road = suburb
+         else road = hamlet
      }
 
      return {
