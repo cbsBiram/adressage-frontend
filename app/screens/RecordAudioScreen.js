@@ -16,10 +16,9 @@ import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
 import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
+
 import addressesApi from "../api/address";
 import cloudinaryApi from "../api/cloudinary";
-import utils from "../utils/utils";
-
 import colors from "../config/colors";
 import Header from "../components/Header";
 import AppButton from "../components/AppButton";
@@ -77,10 +76,10 @@ export default class App extends React.Component {
       progress: 0,
     };
     this.recordingSettings = JSON.parse(
-      JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY)
+      JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
     );
-    // // UNCOMMENT THIS TO TEST maxFileSize:
-    // this.recordingSettings.android['maxFileSize'] = 12000;
+    // UNCOMMENT THIS TO TEST maxFileSize:
+    // this.recordingSettings.android["extension"] = ".mpeg";
   }
 
   componentDidMount() {
@@ -321,68 +320,44 @@ export default class App extends React.Component {
     return `${this._getMMSSFromMillis(0)}`;
   }
 
-  //create a new recording
-  async createAudioAsset() {
-    let newAsset = await MediaLibrary.createAssetAsync(this.recording.getURI());
-
-    //create an album on the device in to which the recordings should be stored, and pass in the new asset to store
-    MediaLibrary.createAlbumAsync("Recordings-MH", newAsset)
-      .then(() => console.log("Album created!"))
-      .catch((err) => console.log("Album creation error", err));
-  }
-
-  async saveToPhoneLibrary() {
-    //call the function that creates a new (if not already existing) album
-    this.createAudioAsset()
-      //then save the created asset to the phone's media library
-      .then((asset) => MediaLibrary.saveToLibraryAsync(asset))
-      .catch((err) => console.log("media library save asset err", err));
-  }
-
   async uploadRecFromPhone() {
-    await this.saveToPhoneLibrary();
+    const cloudUri = await FileSystem.readAsStringAsync(
+      this.recording.getURI(),
+      {
+        encoding: "base64",
+      }
+    );
+    const base64Aud = `data:audio/mpeg;base64,${cloudUri}`;
 
-    //Access the phones files, making sure all file `type`s are available to upload
-    DocumentPicker.getDocumentAsync({
-      type: "*/*",
-      copyToCacheDirectory: true,
-      base64: true,
-    })
-      .then(async (succ) => {
-        console.log(
-          `Recording Information -- path: ${succ.uri}, type: ${succ.type}, size: ${succ.size}`
-        );
+    const response = await cloudinaryApi.uploadAudio(
+      `${base64Aud}`,
+      (progress) => this.setState({ progress })
+    );
+    if (response.ok) {
+      let {
+        data: { secure_url: recordingURL },
+      } = response;
+      console.log("Cloudinary Info:", recordingURL);
+      this.setState({ recordingURL });
 
-        const cloudUri = utils.Base64.encode(succ.uri);
-        let base64Aud = `data:audio/mpeg;base64,${cloudUri}`;
+      const { address } = this.props.route.params;
+      const duration = this._getRecordingTimestamp();
+      const uri = this.state.recordingURL;
 
-        const response = await cloudinaryApi.uploadAudio(`${base64Aud}`);
-        if (response.ok) {
-          let {
-            data: { secure_url: recordingURL },
-          } = response;
-          console.log("Cloudinary Info:", recordingURL);
-          this.setState({ recordingURL });
+      address.uri = uri;
+      address.duration = duration;
 
-          const { address } = this.props.route.params;
-          const duration = this._getRecordingTimestamp();
-          const uri = this.state.recordingURL;
+      const result = await addressesApi.addAddress(address, (progress) =>
+        this.setState({ progress })
+      );
+      if (!result.ok) return alert("Votre audio n'a pas pu être enregistré.");
 
-          address.uri = uri;
-          address.duration = duration;
-
-          const result = await addressesApi.addAddress(address, (progress) =>
-            this.setState({ progress })
-          );
-          if (!result.ok)
-            return alert("Votre audio n'a pas pu être enregistré.");
-
-          this.props.navigation.navigate("Home", { afterRecord: true });
-        } else {
-          alert("Le fichier n'a pas pu être uploadé.");
-        }
-      })
-      .catch((err) => console.log("error uploading from phone", err));
+      this.props.navigation.navigate("Home", { afterRecord: true });
+    } else {
+      alert("Le fichier n'a pas pu être uploadé.");
+    }
+    // })
+    // .catch((err) => console.log("error uploading from phone", err));
   }
 
   render() {

@@ -5,13 +5,16 @@ const client = create({
 });
 const endpoint = "upload";
 
-const uploadAudio = (file) => {
-    const data = new FormData();
+const uploadAudio = (file, onUploadProgress) => {
+    var data = new FormData();
     data.append("file", file);
     data.append("upload_preset", "myhali");
     data.append("resource_type", "video");
 
-    return client.post(endpoint, data);
+    return client.post(endpoint, data, {
+        onUploadProgress: (progress) =>
+            onUploadProgress(progress.loaded / progress.total),
+    });
 };
 
 export default { uploadAudio };

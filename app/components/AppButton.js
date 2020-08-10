@@ -1,24 +1,27 @@
 import React from "react";
-import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import colors from "../config/colors";
+import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import colors from "../config/colors";
 
 function AppButton({ title, onPress, color = "primary", icon }) {
   return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: colors[color] }]}
-      onPress={onPress}
-    >
-      {icon && (
-        <MaterialCommunityIcons
-          color="black"
-          name={icon}
-          size={24}
-          style={styles.icon}
-        />
-      )}
-      <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+    <View>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors[color] }]}
+        onPress={onPress}
+      >
+        {icon && (
+          <MaterialCommunityIcons
+            color="black"
+            name={icon}
+            size={24}
+            style={styles.icon}
+          />
+        )}
+        <Text style={styles.text}>{title}</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 

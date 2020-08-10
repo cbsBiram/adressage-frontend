@@ -67,9 +67,10 @@ class HomeScreen extends React.Component {
   generateCode = async () => {
     let { addressName, addressDetails } = this.state;
     let generatedCode;
+
     if (addressName) {
       const response = await addressesApi.getLocalityExistence(addressName);
-      console.log("Response", response);
+
       if (!response.ok) return alert("Le code n'a pas pu être généré.");
       const {
         data: { isLocation_exists, code },

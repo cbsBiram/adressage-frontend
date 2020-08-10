@@ -52,7 +52,7 @@ export default class App extends React.Component {
             <Stack.Screen
               name="Home"
               component={HomeScreen}
-              initialParams={{ latitude: lat, longitude: lng }}
+              initialParams={{ latitude: 14.6957359, longitude: -17.456137 }}
             />
             <Stack.Screen name="RecordAudio" component={RecordAudioScreen} />
           </Stack.Navigator>
