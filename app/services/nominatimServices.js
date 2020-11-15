@@ -3,7 +3,7 @@ import http from './httpServices';
 const apiEndpoint1 = 'https://nominatim.openstreetmap.org/reverse';
 const apiEndpoint2 = 'https://nominatim.openstreetmap.org/search';
 
-export function reverseGeolocalisation(email, format, lat, lon, addressdetails) {
+export function reverseGeolocation(lat, lon, email = "ibrahimabiram@gmail.com", format = 'jsonv2', addressdetails = 1) {
     return http.get(apiEndpoint1, {
         params: {
             email,
@@ -12,8 +12,9 @@ export function reverseGeolocalisation(email, format, lat, lon, addressdetails) 
             lon,
             addressdetails
         },
-        headers: { "User-Agent": "frontend-adressage" }
+        headers: { "User-Agent": "myhali" }
     });
+
 }
 
 export function getDistrictLocation(format, query, country) {

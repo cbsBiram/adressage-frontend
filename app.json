@@ -1,29 +1,48 @@
 {
-    "expo": {
-        "name": "MyHali",
-        "slug": "myhali-app",
-        "privacy": "public",
-        "sdkVersion": "36.0.0",
-        "platforms": ["ios", "android", "web"],
-        "version": "1.0.0",
-        "orientation": "default",
-        "icon": "./app/assets/logo.png",
-        "splash": {
-            "image": "./app/assets/MyHali-2.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#f0f3f5"
-        },
-        "updates": {
-            "fallbackToCacheTimeout": 0
-        },
-        "assetBundlePatterns": ["**/*"],
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "package": "com.origynslabs.myhali",
-            "versionCode": 2
-        },
-        "description": ""
+  "expo": {
+    "name": "MyHali",
+    "slug": "myhali-app",
+    "privacy": "public",
+    "sdkVersion": "36.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./app/assets/logo.png",
+    "splash": {
+      "image": "./app/assets/MyHali-2.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f0f3f5"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.origynslabs.myhali",
+      "versionCode": 1
+    },
+    "description": "",
+    "extra": {
+      "bugsnag": {
+        "apiKey": "62c901ba58f2e288976e8082e794d586"
+      }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "@bugsnag/expo/hooks/post-publish.js",
+          "config": {}
+        }
+      ]
     }
+  }
 }

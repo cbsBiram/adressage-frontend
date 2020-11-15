@@ -1,89 +1,75 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Toast from "react-native-simple-toast";
 import { StyleSheet, View, ImageBackground } from "react-native";
-import { Asset } from "expo-asset";
 
+import addressesApi from "../api/address";
+import AppActivityIndicator from "../components/AppActivityIndicator";
 import AppButton from "../components/AppButton";
+import AppInput from "../components/AppInput";
 import colors from "../config/colors";
 import Header from "../components/Header";
-import AppInput from "../components/AppInput";
-import addressesApi from "../api/address";
+import routes from "../navigation/routes";
 import UploadScreen from "./UploadScreen";
-import utils from "../utils/utils";
+import useApi from "../hooks/useApi";
+import utils from "../utility/utils";
 import {
-  reverseGeolocalisation,
+  reverseGeolocation,
   getDistrictLocation,
 } from "./../services/nominatimServices";
 
-class AppImage {
-  constructor(module) {
-    this.module = module;
-    Asset.fromModule(this.module).downloadAsync();
-  }
-}
+function HomeScreen(props) {
+  const getCodeApi = useApi(addressesApi.getLocalityExistence);
+  const saveCodeApi = useApi(addressesApi.addAddress);
 
-const BACKGROUND_IMAGE = new AppImage(require("./../assets/road2.webp"));
+  const [addressDetails, setAddressDetails] = useState({});
+  const [addressName, setAddressName] = useState("");
+  const [addressType, setAddressType] = useState("");
+  const [code, setCode] = useState("");
+  const [codeAlreadyExists, setCodeAlreadyExists] = useState(false);
+  const [bBoxDistrict, setBBoxDistrict] = useState(null);
+  const [boundingBox, setBoundingBox] = useState(null);
+  const [uploadVisible, setUploadVisible] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-class HomeScreen extends React.Component {
-  state = {
-    addressDetails: {},
-    addressName: "",
-    addressType: "",
-    code: "",
-    codeAlreadyExists: false,
-    bBoxDistrict: null,
-    uploadVisible: false,
-    progress: 0,
+  const getCurrentLocation = async () => {
+    let { latitude, longitude } = props.route.params;
+
+    try {
+      const { data } = await reverseGeolocation(latitude, longitude);
+
+      setAddressDetails(data.address);
+      setAddressName(data.display_name);
+      setAddressType(data.type);
+      setBoundingBox(data.boundingbox);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  async componentDidMount() {
-    let { latitude, longitude } = this.props.route.params;
-    await reverseGeolocalisation(
-      "ibrahimabiram@gmail.com",
-      "jsonv2",
-      latitude,
-      longitude,
-      1
-    )
-      .then((result) => {
-        let {
-          data: {
-            address: addressDetails,
-            display_name: addressName,
-            type: addressType,
-            boundingbox,
-          },
-        } = result;
-        this.setState({
-          addressDetails,
-          addressName,
-          addressType,
-          boundingbox,
-        });
-      })
-      .catch((error) => console.error(error));
-  }
+  useEffect(() => {
+    getCurrentLocation();
+  }, []);
 
-  generateCode = async () => {
-    let { addressName, addressDetails } = this.state;
+  const generateCode = async () => {
     let generatedCode;
 
     if (addressName) {
-      const response = await addressesApi.getLocalityExistence(addressName);
-
+      const response = await getCodeApi.request(addressName);
+      console.log(response.data);
       if (!response.ok) return alert("Le code n'a pas pu être généré.");
       const {
         data: { isLocation_exists, code },
       } = response;
       generatedCode = isLocation_exists ? code : "";
-      this.generateCodeHandler(generatedCode, addressDetails);
+      generateCodeHandler(generatedCode, addressDetails);
     }
   };
 
-  generateCodeHandler = async (generatedCode, addressDetails) => {
+  const generateCodeHandler = async (generatedCode, addressDetails) => {
     if (generatedCode) {
       Toast.show("Cette localité existe déjà !");
-      this.setState({ code: generatedCode, codeAlreadyExists: true });
+      setCode(generatedCode);
+      setCodeAlreadyExists(true);
     } else {
       if (addressDetails) {
         let { country, region, city, road } = utils.formatAddress(
@@ -95,10 +81,12 @@ class HomeScreen extends React.Component {
         if (road) query = region + "," + city + "," + road;
         else query = region + "," + city;
 
-        await this.getDistrict(query);
+        await getDistrict(query);
 
-        let { bBoxDistrict, boundingbox } = this.state;
-        let suffixCode = utils.getHouseNumber(boundingbox, bBoxDistrict);
+        let suffixCode = utils.getHouseNumber(
+          boundingBox,
+          bBoxDistrict.boundingbox
+        );
 
         if (country && region && city) {
           let regionCode = utils.formatCode(region);
@@ -112,34 +100,26 @@ class HomeScreen extends React.Component {
               regionCode + "-" + cityCode + "-" + roadCode + "-" + suffixCode;
           else generatedCode = regionCode + "-" + cityCode + "-" + suffixCode;
 
-          this.setState({
-            code: generatedCode,
-          });
+          setCode(generatedCode);
         }
       }
     }
   };
 
-  getDistrict = async (query) => {
+  const getDistrict = async (query) => {
     await getDistrictLocation("jsonv2", query, "sn")
       .then(({ data }) => {
-        let { boundingbox: bBoxDistrict } = data[0];
-        this.setState({ bBoxDistrict });
+        setBBoxDistrict(data[0]);
       })
       .catch((error) => console.error(error));
   };
 
-  saveCode = async (e) => {
+  const saveCode = async (e) => {
     e.preventDefault();
-    let {
-      addressName: location_name,
-      code: generated_code,
-      addressDetails,
-    } = this.state;
     let { country, region, city, road: suburb } = utils.formatAddress(
       addressDetails
     );
-    let { latitude, longitude } = this.props.route.params;
+    let { latitude, longitude } = props.route.params;
     let address = {
       country,
       region,
@@ -152,25 +132,22 @@ class HomeScreen extends React.Component {
     };
 
     this.setState({ progress: 0, uploadVisible: true });
-    const response = await addressesApi.addAddress(address, (progress) =>
-      this.setState({ progress })
+    setProgress(0);
+    setUploadVisible(true);
+    const response = await saveCodeApi.request(address, (progressUpload) =>
+      setProgress(progressUpload)
     );
     if (!response.ok) return alert("Votre code n'a pas pu être enregistré.");
 
-    this.setState({ codeAlreadyExists: true });
+    setCodeAlreadyExists(true);
     alert("Votre code a bien été enregistré !!!");
   };
 
-  goToRecord = () => {
-    let {
-      addressName: location_name,
-      code: generated_code,
-      addressDetails,
-    } = this.state;
+  const goToRecord = () => {
     let { country, region, city, road: suburb } = utils.formatAddress(
       addressDetails
     );
-    let { latitude, longitude } = this.props.route.params;
+    let { latitude, longitude } = props.route.params;
     let address = {
       country,
       region,
@@ -182,54 +159,51 @@ class HomeScreen extends React.Component {
       generated_code,
     };
 
-    this.props.navigation.navigate("RecordAudio", { address });
+    props.navigation.navigate(routes.Record, { address });
   };
 
-  render() {
-    var {
-      addressName,
-      code,
-      codeAlreadyExists,
-      uploadVisible,
-      progress,
-    } = this.state;
-    var isCodeGenerated = code ? true : false;
-    const { afterRecord } = this.props.route.params;
+  var isCodeGenerated = code ? true : false;
+  const { afterRecord } = props.route.params;
 
-    return (
+  return (
+    <>
+      <AppActivityIndicator visible={getCodeApi.loading} />
       <View style={styles.container}>
         <Header />
         <UploadScreen
-          onDone={() => this.setState({ uploadVisible: false })}
+          onDone={() => setUploadVisible(false)}
           progress={progress}
           visible={uploadVisible}
         />
-        <ImageBackground style={styles.image} source={BACKGROUND_IMAGE.module}>
+        <ImageBackground
+          style={styles.image}
+          source={require("./../assets/road2.webp")}
+        >
           <AppInput
             inputStyle={styles.input}
             addressName={addressName}
             code={code}
           />
-          <AppButton title="Générer code" onPress={() => this.generateCode()} />
+          <AppButton title="Générer code" onPress={() => generateCode()} />
 
           {isCodeGenerated && !codeAlreadyExists && !afterRecord && (
             <>
               <AppButton
                 icon="content-save"
-                onPress={(e) => this.saveCode(e)}
+                onPress={(e) => saveCode(e)}
                 title="Enregistrer code"
               />
               <AppButton
                 icon="microphone"
                 title="Enregistrer avec vocal"
-                onPress={() => this.goToRecord()}
+                onPress={() => goToRecord()}
               />
             </>
           )}
         </ImageBackground>
       </View>
-    );
-  }
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -248,12 +222,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     fontSize: 17,
-  },
-  buttonGroup: {
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-around",
-    marginTop: 15,
   },
   image: {
     width: "100%",
