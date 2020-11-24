@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Toast from "react-native-simple-toast";
-import { StyleSheet, View, ImageBackground } from "react-native";
+import { StyleSheet, View, ImageBackground, Share } from "react-native";
 
 import addressesApi from "../api/address";
 import AppActivityIndicator from "../components/AppActivityIndicator";
@@ -26,10 +26,11 @@ function HomeScreen(props) {
   const [addressType, setAddressType] = useState("");
   const [code, setCode] = useState("");
   const [codeAlreadyExists, setCodeAlreadyExists] = useState(false);
-  const [bBoxDistrict, setBBoxDistrict] = useState(null);
   const [boundingBox, setBoundingBox] = useState(null);
   const [uploadVisible, setUploadVisible] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const shareButtonVisible = afterRecord || codeAlreadyExists;
 
   const getCurrentLocation = async () => {
     let { latitude, longitude } = props.route.params;
@@ -55,13 +56,13 @@ function HomeScreen(props) {
 
     if (addressName) {
       const response = await getCodeApi.request(addressName);
-      console.log(response.data);
+
       if (!response.ok) return alert("Le code n'a pas pu être généré.");
       const {
         data: { isLocation_exists, code },
       } = response;
       generatedCode = isLocation_exists ? code : "";
-      generateCodeHandler(generatedCode, addressDetails);
+      await generateCodeHandler(generatedCode, addressDetails);
     }
   };
 
@@ -81,12 +82,9 @@ function HomeScreen(props) {
         if (road) query = region + "," + city + "," + road;
         else query = region + "," + city;
 
-        await getDistrict(query);
-
-        let suffixCode = utils.getHouseNumber(
-          boundingBox,
-          bBoxDistrict.boundingbox
-        );
+        let bBoxDistrict = await getDistrict(query);
+        let boundingBoxRoad = bBoxDistrict.boundingbox;
+        let suffixCode = utils.getHouseNumber(boundingBox, boundingBoxRoad);
 
         if (country && region && city) {
           let regionCode = utils.formatCode(region);
@@ -107,11 +105,34 @@ function HomeScreen(props) {
   };
 
   const getDistrict = async (query) => {
+    let response;
     await getDistrictLocation("jsonv2", query, "sn")
       .then(({ data }) => {
-        setBBoxDistrict(data[0]);
+        response = data[0];
       })
       .catch((error) => console.error(error));
+
+    // setBBoxDistrict(resp);
+    return response;
+  };
+
+  const goToRecord = () => {
+    let { country, region, city, road: suburb } = utils.formatAddress(
+      addressDetails
+    );
+    let { latitude, longitude } = props.route.params;
+    let address = {
+      country,
+      region,
+      city,
+      suburb,
+      location_name: addressName,
+      latitude,
+      longitude,
+      generated_code: code,
+    };
+
+    props.navigation.navigate(routes.Record, { address });
   };
 
   const saveCode = async (e) => {
@@ -125,41 +146,41 @@ function HomeScreen(props) {
       region,
       city,
       suburb,
-      location_name,
+      location_name: addressName,
       latitude,
       longitude,
-      generated_code,
+      generated_code: code,
     };
-
-    this.setState({ progress: 0, uploadVisible: true });
     setProgress(0);
     setUploadVisible(true);
+
     const response = await saveCodeApi.request(address, (progressUpload) =>
       setProgress(progressUpload)
     );
+
     if (!response.ok) return alert("Votre code n'a pas pu être enregistré.");
 
     setCodeAlreadyExists(true);
     alert("Votre code a bien été enregistré !!!");
   };
 
-  const goToRecord = () => {
-    let { country, region, city, road: suburb } = utils.formatAddress(
-      addressDetails
-    );
-    let { latitude, longitude } = props.route.params;
-    let address = {
-      country,
-      region,
-      city,
-      suburb,
-      location_name,
-      latitude,
-      longitude,
-      generated_code,
-    };
+  const shareCode = async () => {
+    try {
+      const result = await Share.share({
+        message: code,
+        title: "Votre code Myhali",
+        // url: "https://reactnativemaster.com/react-native-camera-expo-example/",
+      });
 
-    props.navigation.navigate(routes.Record, { address });
+      if (result.action === Share.sharedAction) {
+        alert("Post Shared");
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+        alert("Post cancelled");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   var isCodeGenerated = code ? true : false;
@@ -191,14 +212,22 @@ function HomeScreen(props) {
               <AppButton
                 icon="content-save"
                 onPress={(e) => saveCode(e)}
-                title="Enregistrer code"
+                title="Enregistrer"
               />
               <AppButton
                 icon="microphone"
-                title="Enregistrer avec vocal"
+                title="Vocal"
                 onPress={() => goToRecord()}
               />
             </>
+          )}
+
+          {shareButtonVisible && (
+            <AppButton
+              icon="share"
+              title="Partager"
+              onPress={() => shareCode()}
+            />
           )}
         </ImageBackground>
       </View>

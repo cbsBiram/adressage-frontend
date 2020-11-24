@@ -1,6 +1,7 @@
 import { letters } from "./letters"
 
 const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
+    // console.log('BBR', boundingBoxRoad)
     const latStep = 0.0001;
     const longStep = 0.0002;
     const unitOfChange = 5000;
