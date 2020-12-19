@@ -30,7 +30,6 @@ function HomeScreen(props) {
   const [uploadVisible, setUploadVisible] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const shareButtonVisible = afterRecord || codeAlreadyExists;
 
   const getCurrentLocation = async () => {
     let { latitude, longitude } = props.route.params;
@@ -158,7 +157,10 @@ function HomeScreen(props) {
       setProgress(progressUpload)
     );
 
-    if (!response.ok) return alert("Votre code n'a pas pu être enregistré.");
+    if (!response.ok) {
+      setUploadVisible(false);
+      return alert("Votre code n'a pas pu être enregistré.");
+    }
 
     setCodeAlreadyExists(true);
     alert("Votre code a bien été enregistré !!!");
@@ -171,13 +173,6 @@ function HomeScreen(props) {
         title: "Votre code Myhali",
         // url: "https://reactnativemaster.com/react-native-camera-expo-example/",
       });
-
-      if (result.action === Share.sharedAction) {
-        alert("Post Shared");
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-        alert("Post cancelled");
-      }
     } catch (error) {
       alert(error.message);
     }
@@ -185,17 +180,18 @@ function HomeScreen(props) {
 
   var isCodeGenerated = code ? true : false;
   const { afterRecord } = props.route.params;
+  const shareButtonVisible = afterRecord || codeAlreadyExists;
 
   return (
     <>
       <AppActivityIndicator visible={getCodeApi.loading} />
       <View style={styles.container}>
         <Header />
-        <UploadScreen
+        {/* <UploadScreen
           onDone={() => setUploadVisible(false)}
           progress={progress}
           visible={uploadVisible}
-        />
+        /> */}
         <ImageBackground
           style={styles.image}
           source={require("./../assets/road2.webp")}
