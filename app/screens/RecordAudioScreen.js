@@ -11,10 +11,8 @@ import { Asset } from "expo-asset";
 import { Audio } from "expo-av";
 import { ImageBackground } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import * as Font from "expo-font";
-import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
 
 import addressesApi from "../api/address";

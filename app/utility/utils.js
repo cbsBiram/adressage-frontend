@@ -1,9 +1,10 @@
 import { letters } from "./letters"
 
 const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
+    // console.log('BBR', boundingBoxRoad)
     const latStep = 0.0001;
     const longStep = 0.0002;
-    const unitOfChange = 10000;
+    const unitOfChange = 5000;
 
     let code;
     let housePosition = 0;
@@ -18,7 +19,7 @@ const getHouseNumber = (boundingBoxPoint, boundingBoxRoad) => {
             for (var y = longMin; y <= longMax; y += longStep) {
                 housePosition += 1;
 
-                if (y >= boundingBoxPoint[4])
+                if (y >= boundingBoxPoint[3])
                     break;
             }
         }
