@@ -16,6 +16,7 @@ import {
   reverseGeolocation,
   getDistrictLocation,
 } from "./../services/nominatimServices";
+import { AsyncStorage } from 'react-native';
 
 function HomeScreen(props) {
   const getCodeApi = useApi(addressesApi.getLocalityExistence);
@@ -134,6 +135,10 @@ function HomeScreen(props) {
     props.navigation.navigate(routes.Record, { address });
   };
 
+  const goToAdressList = () => {
+    props.navigation.navigate('AdressList');
+  };
+
   const saveCode = async (e) => {
     e.preventDefault();
     let { country, region, city, road: suburb } = utils.formatAddress(
@@ -163,6 +168,13 @@ function HomeScreen(props) {
     }
 
     setCodeAlreadyExists(true);
+    try {
+      const jsonValue = JSON.stringify(response)
+      await AsyncStorage.setItem('ListeAdresses', jsonValue);
+      console.log(response);
+    } catch (error) {
+      alert(error);
+    }
     alert("Votre code a bien été enregistré !!!");
   };
 
@@ -202,6 +214,8 @@ function HomeScreen(props) {
             code={code}
           />
           <AppButton title="Générer code" onPress={() => generateCode()} />
+          <AppButton title="Addresses enregistrées" onPress={() => goToAdressList()} />
+
 
           {isCodeGenerated && !codeAlreadyExists && !afterRecord && (
             <>
