@@ -115,3 +115,5 @@ shellAppWorkspaces
 .env.test.local
 .env.production.local
 environment.js
+
+package-lock.json
