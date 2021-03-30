@@ -8,6 +8,17 @@ const getLocalityExistence = (location) =>
         location,
     });
 
+const getData = async () => {
+      try {
+        const jsonVal = await AsyncStorage.getItem(response)
+        const jsonData = jsonVal != null ? jsonVal.data : null;
+        console.log("jsondata : ", jsonData);
+        return jsonVal != null ? JSON.parse(jsonVal) : null;
+      } catch(e) {
+        // lance une erreur
+      }
+  }
+
 const addAddress = (address, onUploadProgress) => {
     return client.post(endpoint2, address, {
         onUploadProgress: (progress) =>
@@ -15,4 +26,4 @@ const addAddress = (address, onUploadProgress) => {
     });
 };
 
-export default { addAddress, getLocalityExistence };
+export default { addAddress, getLocalityExistence, getData };

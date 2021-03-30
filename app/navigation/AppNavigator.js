@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import AppActivityIndicator from "../components/AppActivityIndicator";
 import HomeScreen from "../screens/HomeScreen";
 import RecordAudioScreen from "../screens/RecordAudioScreen";
+import AdressList from "../screens/AdressList";
 
 const Stack = createStackNavigator();
 
@@ -44,8 +45,9 @@ const AppNavigator = () => {
           name="Home"
           component={HomeScreen}
           initialParams={{ latitude: lat, longitude: lng }}
-        />
-        <Stack.Screen name="RecordAudio" component={RecordAudioScreen} />
+          />
+          <Stack.Screen name="AdressList" component={AdressList} />
+          <Stack.Screen name="RecordAudio" component={RecordAudioScreen} />
       </Stack.Navigator>
     );
   return <AppActivityIndicator visible={true} />;
