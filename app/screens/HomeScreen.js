@@ -16,7 +16,7 @@ import {
   reverseGeolocation,
   getDistrictLocation,
 } from "./../services/nominatimServices";
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from "@react-native-community/async-storage";
 
 function HomeScreen(props) {
   const getCodeApi = useApi(addressesApi.getLocalityExistence);
@@ -30,7 +30,6 @@ function HomeScreen(props) {
   const [boundingBox, setBoundingBox] = useState(null);
   const [uploadVisible, setUploadVisible] = useState(false);
   const [progress, setProgress] = useState(0);
-
 
   const getCurrentLocation = async () => {
     let { latitude, longitude } = props.route.params;
@@ -102,6 +101,13 @@ function HomeScreen(props) {
         }
       }
     }
+    try {
+      let object = { address: addressName, code: generatedCode };
+      const jsonValue = JSON.stringify(object);
+      await AsyncStorage.setItem("ListeAdresses", jsonValue);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const getDistrict = async (query) => {
@@ -112,7 +118,6 @@ function HomeScreen(props) {
       })
       .catch((error) => console.error(error));
 
-    // setBBoxDistrict(resp);
     return response;
   };
 
@@ -136,7 +141,7 @@ function HomeScreen(props) {
   };
 
   const goToAdressList = () => {
-    props.navigation.navigate('AdressList');
+    props.navigation.navigate("AdressList");
   };
 
   const saveCode = async (e) => {
@@ -168,13 +173,6 @@ function HomeScreen(props) {
     }
 
     setCodeAlreadyExists(true);
-    try {
-      const jsonValue = JSON.stringify(response)
-      await AsyncStorage.setItem('ListeAdresses', jsonValue);
-      console.log(response);
-    } catch (error) {
-      alert(error);
-    }
     alert("Votre code a bien été enregistré !!!");
   };
 
@@ -214,8 +212,10 @@ function HomeScreen(props) {
             code={code}
           />
           <AppButton title="Générer code" onPress={() => generateCode()} />
-          <AppButton title="Addresses enregistrées" onPress={() => goToAdressList()} />
-
+          <AppButton
+            title="Addresses enregistrées"
+            onPress={() => goToAdressList()}
+          />
 
           {isCodeGenerated && !codeAlreadyExists && !afterRecord && (
             <>
