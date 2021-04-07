@@ -116,4 +116,5 @@ shellAppWorkspaces
 .env.production.local
 environment.js
 
+# npm 
 package-lock.json
