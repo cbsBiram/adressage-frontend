@@ -213,7 +213,7 @@ function HomeScreen(props) {
           />
           <AppButton title="Générer code" onPress={() => generateCode()} />
           <AppButton
-            title="Addresses enregistrées"
+            title="Adresses enregistrées"
             onPress={() => goToAdressList()}
           />
 
