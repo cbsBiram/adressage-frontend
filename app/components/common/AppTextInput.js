@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import defaultStyles from "../config/styles";
+import defaultStyles from "../../config/styles";
 
 function AppTextInput({ icon, width = "100%", ...otherProps }) {
   return (
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 15,
     marginVertical: 10,
+    alignItems: "center",
   },
   icon: {
     marginRight: 10,

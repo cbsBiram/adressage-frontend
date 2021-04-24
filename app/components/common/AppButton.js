@@ -2,7 +2,7 @@ import React from "react";
 import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import colors from "../config/colors";
+import colors from "../../config/colors";
 
 function AppButton({ title, onPress, color = "primary", icon }) {
   return (
@@ -33,9 +33,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginVertical: 10,
-    marginLeft: 70,
     padding: 15,
-    width: "60%",
+    width: "80%",
     alignContent: "center",
   },
 
@@ -43,6 +42,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   text: {
+    flex: 1,
     color: colors.white,
     fontSize: 18,
     fontWeight: "bold",

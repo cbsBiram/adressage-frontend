@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Image, Platform } from "react-native";
 
-import colors from "../config/colors";
+import colors from "../../config/colors";
 
 export default class Header extends React.Component {
   render() {
@@ -10,7 +10,7 @@ export default class Header extends React.Component {
         <View style={styles.header}>
           <Image
             style={styles.logoStyle}
-            source={require("./../assets/logo.jpg")}
+            source={require("../../assets/logo.jpg")}
           />
           <Text style={styles.headText}>MyHali</Text>
         </View>

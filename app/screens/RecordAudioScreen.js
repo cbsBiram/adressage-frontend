@@ -18,8 +18,7 @@ import * as Permissions from "expo-permissions";
 import addressesApi from "../api/address";
 import cloudinaryApi from "../api/cloudinary";
 import colors from "../config/colors";
-import Header from "../components/Header";
-import AppButton from "../components/AppButton";
+import AppButton from "../components/common/AppButton";
 import UploadScreen from "./UploadScreen";
 
 class Icon {
@@ -335,7 +334,6 @@ export default class App extends React.Component {
       let {
         data: { secure_url: recordingURL },
       } = response;
-      console.log("Cloudinary Info:", recordingURL);
       this.setState({ recordingURL });
 
       const { address } = this.props.route.params;
@@ -350,12 +348,10 @@ export default class App extends React.Component {
       );
       if (!result.ok) return alert("Votre audio n'a pas pu être enregistré.");
 
-      this.props.navigation.navigate("Home", { afterRecord: true });
+      this.props.navigation.navigate("Accueil", { afterRecord: true });
     } else {
       alert("Le fichier n'a pas pu être uploadé.");
     }
-    // })
-    // .catch((err) => console.log("error uploading from phone", err));
   }
 
   render() {
@@ -386,7 +382,6 @@ export default class App extends React.Component {
 
     return (
       <>
-        <Header />
         <UploadScreen
           onDone={() => this.setState({ uploadVisible: false })}
           progress={this.state.progress}
@@ -556,6 +551,11 @@ export default class App extends React.Component {
                   title="Enregistrer"
                   onPress={() => this.uploadRecFromPhone()}
                 />
+                <AppButton
+                  icon="keyboard-backspace"
+                  title="Retour"
+                  onPress={() => this.props.navigation.goBack()}
+                />
               </View>
             </View>
           </View>
@@ -567,7 +567,8 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
-    flex: 0.5,
+    flex: 1,
+    alignItems: "center",
     marginBottom: 150,
   },
   container: {

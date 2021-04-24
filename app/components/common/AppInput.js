@@ -3,7 +3,7 @@ import { Input } from "react-native-elements";
 import { StyleSheet, View, TextInput } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import defaultStyles from "../config/styles";
+import defaultStyles from "../../config/styles";
 
 const Inputs = ({ inputStyle, addressName, code }) => {
   return (
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 15,
     marginVertical: 10,
+    marginTop: 20,
   },
   label: {
     color: "#ffffff",

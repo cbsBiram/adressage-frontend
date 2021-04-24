@@ -3,12 +3,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeNavigator from "./HomeNavigator";
-import AddressNavigator from "./AddressNavigator";
 import AuthNavigator from "./AuthNavigator";
 
 const Tab = createBottomTabNavigator();
 
-const AppNavigator = () => {
+const NoAccountNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -21,11 +20,11 @@ const AppNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Carnet"
-        component={AddressNavigator}
+        name="Compte"
+        component={AuthNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="book" color={color} size={size} />
+            <MaterialCommunityIcons name="account" color={color} size={size} />
           ),
         }}
       />
@@ -33,4 +32,4 @@ const AppNavigator = () => {
   );
 };
 
-export default AppNavigator;
+export default NoAccountNavigator;

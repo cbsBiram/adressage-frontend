@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Toast from "react-native-simple-toast";
 import { StyleSheet, View, ImageBackground, Share } from "react-native";
 
 import addressesApi from "../api/address";
-import AppActivityIndicator from "../components/AppActivityIndicator";
-import AppButton from "../components/AppButton";
-import AppInput from "../components/AppInput";
+import AppActivityIndicator from "../components/common/AppActivityIndicator";
+import AppButton from "../components/common/AppButton";
+import AppInput from "../components/common/AppInput";
 import colors from "../config/colors";
-import Header from "../components/Header";
 import routes from "../navigation/routes";
-import UploadScreen from "./UploadScreen";
 import useApi from "../hooks/useApi";
 import utils from "../utility/utils";
 import {
   reverseGeolocation,
   getDistrictLocation,
 } from "./../services/nominatimServices";
-import AsyncStorage from "@react-native-community/async-storage";
+import AuthContext from "../auth/context";
 
 function HomeScreen(props) {
   const getCodeApi = useApi(addressesApi.getLocalityExistence);
@@ -28,8 +26,10 @@ function HomeScreen(props) {
   const [code, setCode] = useState("");
   const [codeAlreadyExists, setCodeAlreadyExists] = useState(false);
   const [boundingBox, setBoundingBox] = useState(null);
-  const [uploadVisible, setUploadVisible] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const userContext = useContext(AuthContext);
+  const userId = userContext?.user?.user_id;
 
   const getCurrentLocation = async () => {
     let { latitude, longitude } = props.route.params;
@@ -54,7 +54,7 @@ function HomeScreen(props) {
     let generatedCode;
 
     if (addressName) {
-      const response = await getCodeApi.request(addressName);
+      const response = await getCodeApi.request(addressName, userId);
 
       if (!response.ok) return alert("Le code n'a pas pu être généré.");
       const {
@@ -101,13 +101,6 @@ function HomeScreen(props) {
         }
       }
     }
-    try {
-      let object = { address: addressName, code: generatedCode };
-      const jsonValue = JSON.stringify(object);
-      await AsyncStorage.setItem("ListeAdresses", jsonValue);
-    } catch (error) {
-      alert(error);
-    }
   };
 
   const getDistrict = async (query) => {
@@ -126,6 +119,7 @@ function HomeScreen(props) {
       addressDetails
     );
     let { latitude, longitude } = props.route.params;
+    let usersId = userId ? [userId] : null;
     let address = {
       country,
       region,
@@ -135,13 +129,10 @@ function HomeScreen(props) {
       latitude,
       longitude,
       generated_code: code,
+      users_id: usersId,
     };
 
-    props.navigation.navigate(routes.Record, { address });
-  };
-
-  const goToAdressList = () => {
-    props.navigation.navigate("AdressList");
+    props.navigation.navigate(routes.RECORD, { address });
   };
 
   const saveCode = async (e) => {
@@ -149,6 +140,7 @@ function HomeScreen(props) {
     let { country, region, city, road: suburb } = utils.formatAddress(
       addressDetails
     );
+    let usersId = userId ? [userId] : null;
     let { latitude, longitude } = props.route.params;
     let address = {
       country,
@@ -159,21 +151,19 @@ function HomeScreen(props) {
       latitude,
       longitude,
       generated_code: code,
+      users_id: usersId,
     };
-    setProgress(0);
-    setUploadVisible(true);
 
     const response = await saveCodeApi.request(address, (progressUpload) =>
       setProgress(progressUpload)
     );
 
     if (!response.ok) {
-      setUploadVisible(false);
       return alert("Votre code n'a pas pu être enregistré.");
     }
 
     setCodeAlreadyExists(true);
-    alert("Votre code a bien été enregistré !!!");
+    props.navigation.navigate(routes.MY_ADRESSES);
   };
 
   const shareCode = async () => {
@@ -196,12 +186,7 @@ function HomeScreen(props) {
     <>
       <AppActivityIndicator visible={getCodeApi.loading} />
       <View style={styles.container}>
-        <Header />
-        {/* <UploadScreen
-          onDone={() => setUploadVisible(false)}
-          progress={progress}
-          visible={uploadVisible}
-        /> */}
+        {/* <Header /> */}
         <ImageBackground
           style={styles.image}
           source={require("./../assets/road2.webp")}
@@ -211,34 +196,32 @@ function HomeScreen(props) {
             addressName={addressName}
             code={code}
           />
-          <AppButton title="Générer code" onPress={() => generateCode()} />
-          <AppButton
-            title="Adresses enregistrées"
-            onPress={() => goToAdressList()}
-          />
+          <View style={{ alignItems: "center" }}>
+            <AppButton title="Générer code" onPress={() => generateCode()} />
 
-          {isCodeGenerated && !codeAlreadyExists && !afterRecord && (
-            <>
-              <AppButton
-                icon="content-save"
-                onPress={(e) => saveCode(e)}
-                title="Enregistrer"
-              />
-              <AppButton
-                icon="microphone"
-                title="Vocal"
-                onPress={() => goToRecord()}
-              />
-            </>
-          )}
+            {isCodeGenerated && !codeAlreadyExists && !afterRecord && (
+              <>
+                <AppButton
+                  icon="content-save"
+                  onPress={(e) => saveCode(e)}
+                  title="Enregistrer"
+                />
+                <AppButton
+                  icon="microphone"
+                  title="Vocal"
+                  onPress={() => goToRecord()}
+                />
+              </>
+            )}
 
-          {shareButtonVisible && (
-            <AppButton
-              icon="share"
-              title="Partager"
-              onPress={() => shareCode()}
-            />
-          )}
+            {shareButtonVisible && (
+              <AppButton
+                icon="share"
+                title="Partager"
+                onPress={() => shareCode()}
+              />
+            )}
+          </View>
         </ImageBackground>
       </View>
     </>
