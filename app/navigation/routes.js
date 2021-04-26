@@ -1,4 +1,7 @@
 export default Object.freeze({
-    MAP: "Map",
-    Record: "RecordAudio"
-})
+  HOME: "Accueil",
+  RECORD: "Enregistrer audio",
+  REGISTER: "Inscription",
+  LOGIN: "Identification",
+  MY_ADRESSES: "Carnet d'adresse",
+});
