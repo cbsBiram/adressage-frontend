@@ -72,9 +72,8 @@ function HomeScreen(props) {
       setCodeAlreadyExists(true);
     } else {
       if (addressDetails) {
-        let { country, region, city, road } = utils.formatAddress(
-          addressDetails
-        );
+        let { country, region, city, road } =
+          utils.formatAddress(addressDetails);
 
         // load the bounding box of the road
         let query;
@@ -105,7 +104,7 @@ function HomeScreen(props) {
 
   const getDistrict = async (query) => {
     let response;
-    await getDistrictLocation("jsonv2", query, "sn")
+    await getDistrictLocation("jsonv2", query, "sn,ao,ga,us")
       .then(({ data }) => {
         response = data[0];
       })
@@ -115,9 +114,12 @@ function HomeScreen(props) {
   };
 
   const goToRecord = () => {
-    let { country, region, city, road: suburb } = utils.formatAddress(
-      addressDetails
-    );
+    let {
+      country,
+      region,
+      city,
+      road: suburb,
+    } = utils.formatAddress(addressDetails);
     let { latitude, longitude } = props.route.params;
     let usersId = userId ? [userId] : null;
     let address = {
@@ -137,9 +139,12 @@ function HomeScreen(props) {
 
   const saveCode = async (e) => {
     e.preventDefault();
-    let { country, region, city, road: suburb } = utils.formatAddress(
-      addressDetails
-    );
+    let {
+      country,
+      region,
+      city,
+      road: suburb,
+    } = utils.formatAddress(addressDetails);
     let usersId = userId ? [userId] : null;
     let { latitude, longitude } = props.route.params;
     let address = {
@@ -168,7 +173,7 @@ function HomeScreen(props) {
 
   const shareCode = async () => {
     try {
-      const result = await Share.share({
+      await Share.share({
         message: code,
         title: "Votre code Myhali",
         // url: "https://reactnativemaster.com/react-native-camera-expo-example/",
