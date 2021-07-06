@@ -10,10 +10,7 @@ import colors from "../config/colors";
 import routes from "../navigation/routes";
 import useApi from "../hooks/useApi";
 import utils from "../utility/utils";
-import {
-  reverseGeolocation,
-  getDistrictLocation,
-} from "./../services/nominatimServices";
+import reverseGeolocation from "./../services/nominatimServices";
 import AuthContext from "../auth/context";
 
 function HomeScreen(props) {
@@ -37,10 +34,10 @@ function HomeScreen(props) {
     try {
       const { data } = await reverseGeolocation(latitude, longitude);
 
-      setAddressDetails(data.address);
-      setAddressName(data.display_name);
-      setAddressType(data.type);
-      setBoundingBox(data.boundingbox);
+      setAddressDetails(data.features[0]);
+      setAddressName(data.features[0].place_name);
+      setAddressType(data.features[0].place_type);
+      setBoundingBox(data.features[0].bbox);
     } catch (error) {
       console.error(error);
     }
@@ -72,29 +69,18 @@ function HomeScreen(props) {
       setCodeAlreadyExists(true);
     } else {
       if (addressDetails) {
-        let { country, region, city, road } =
+        let { country, region, city} =
           utils.formatAddress(addressDetails);
 
         // load the bounding box of the road
         let query;
-        if (road) query = region + "," + city + "," + road;
-        else query = region + "," + city;
-
-        let bBoxDistrict = await getDistrict(query);
-        let boundingBoxRoad = bBoxDistrict.boundingbox;
-        let suffixCode = utils.getHouseNumber(boundingBox, boundingBoxRoad);
+        query = region + "," + city;
+        let suffixCode = utils.getHouseNumber(boundingBox);
 
         if (country && region && city) {
           let regionCode = utils.formatCode(region);
           let cityCode = utils.formatCode(city);
-
-          let roadCode;
-          if (road) roadCode = utils.formatCode(road);
-
-          if (road)
-            generatedCode =
-              regionCode + "-" + cityCode + "-" + roadCode + "-" + suffixCode;
-          else generatedCode = regionCode + "-" + cityCode + "-" + suffixCode;
+          generatedCode = regionCode + "-" + cityCode + "-" + suffixCode;
 
           setCode(generatedCode);
         }
@@ -102,23 +88,11 @@ function HomeScreen(props) {
     }
   };
 
-  const getDistrict = async (query) => {
-    let response;
-    await getDistrictLocation("jsonv2", query, "sn,ao,ga,us")
-      .then(({ data }) => {
-        response = data[0];
-      })
-      .catch((error) => console.error(error));
-
-    return response;
-  };
-
   const goToRecord = () => {
     let {
       country,
       region,
       city,
-      road: suburb,
     } = utils.formatAddress(addressDetails);
     let { latitude, longitude } = props.route.params;
     let usersId = userId ? [userId] : null;
@@ -126,7 +100,6 @@ function HomeScreen(props) {
       country,
       region,
       city,
-      suburb,
       location_name: addressName,
       latitude,
       longitude,
@@ -143,7 +116,6 @@ function HomeScreen(props) {
       country,
       region,
       city,
-      road: suburb,
     } = utils.formatAddress(addressDetails);
     let usersId = userId ? [userId] : null;
     let { latitude, longitude } = props.route.params;
@@ -151,7 +123,6 @@ function HomeScreen(props) {
       country,
       region,
       city,
-      suburb,
       location_name: addressName,
       latitude,
       longitude,
