@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import AppNavigator from "./app/navigation/AppNavigator";
 import navigationTheme from "./app/navigation/navigationTheme";
-import { AppLoading } from "expo";
+import AppLoading from "expo-app-loading";
 import AuthContext from "./app/auth/context";
 import authStorage from "./app/auth/storage";
 import NoAccountNavigator from "./app/navigation/NoAccountNavigator";
@@ -19,7 +19,11 @@ export default function App() {
 
   if (!isReady)
     return (
-      <AppLoading startAsync={restoreUser} onFinish={() => setIsReady(true)} />
+      <AppLoading
+        startAsync={restoreUser}
+        onError={(e) => console.warn(e)}
+        onFinish={() => setIsReady(true)}
+      />
     );
 
   return (
