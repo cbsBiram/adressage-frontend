@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as Location from "expo-location";
 
 import AppActivityIndicator from "../components/common/AppActivityIndicator";
 import HomeScreen from "../screens/HomeScreen";
@@ -19,13 +20,23 @@ const HomeNavigator = () => {
       timeOut: 10000,
       maximumAge: 5000,
     };
+
     setReady(false);
-    navigator.geolocation.getCurrentPosition(
-      geoSuccess,
-      geoFailure,
-      geoOptions
-    );
+    getCurrentLocation();
   }, []);
+
+  const getCurrentLocation = async () => {
+    try {
+      const { granted } = await Location.requestForegroundPermissionsAsync();
+      if (!granted) return;
+      const {
+        coords: { latitude, longitude },
+      } = await Location.getCurrentPositionAsync();
+      setWhere({ lat: latitude, lng: longitude });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const geoSuccess = ({ coords }) => {
     setReady(true);

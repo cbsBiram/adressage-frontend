@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeNavigator from "./HomeNavigator";
 import AddressNavigator from "./AddressNavigator";
-import AuthNavigator from "./AuthNavigator";
 
 const Tab = createBottomTabNavigator();
 
