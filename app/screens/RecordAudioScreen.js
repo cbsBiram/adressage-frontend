@@ -1,12 +1,12 @@
 import React from "react";
 import {
   Dimensions,
-  Slider,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
 } from "react-native";
+import { Slider } from "@react-native-community/slider";
 import { Asset } from "expo-asset";
 import { Audio } from "expo-av";
 import { ImageBackground } from "react-native";
@@ -76,7 +76,6 @@ export default class App extends React.Component {
       JSON.stringify(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
     );
     // UNCOMMENT THIS TO TEST maxFileSize:
-    // this.recordingSettings.android["extension"] = ".mpeg";
   }
 
   componentDidMount() {
