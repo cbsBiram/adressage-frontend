@@ -104,7 +104,7 @@ function HomeScreen(props) {
 
   const getDistrict = async (query) => {
     let response;
-    await getDistrictLocation("jsonv2", query, "sn,ao,ga,us")
+    await getDistrictLocation("jsonv2", query)
       .then(({ data }) => {
         response = data[0];
       })
